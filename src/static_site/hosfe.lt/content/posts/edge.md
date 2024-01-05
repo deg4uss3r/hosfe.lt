@@ -107,6 +107,8 @@ If you fork one of Fastly's template repositories there's some files in there th
 
 `README` - I definitely forgot to change this at first, so learn from my mistakes! 
 
+`./.github/CODEOWNERS` - This is for the Fastly organization and template, change and/or remove this file it won't work anyways! 
+
 ## Fin
 
 That is pretty much all you need to really get started with the edge using a test domain, In the next post (since this one has gotten a little longer than I anticipated) I'll explain my DNS and deployment setup. I hope this was helpful!
