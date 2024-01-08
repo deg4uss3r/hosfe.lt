@@ -16,23 +16,27 @@ I am taking advantage of learning at my new job by utitilzing [Fastly's](htttps:
 
 ## Why I Put The Blog On The Edge
 
-Previously, for about 10 years I have been using the same [Digital Ocean](https://digitalocean.com) Droplet as a Virtual Private Server (VPS) serving my site. I have no complaints and it's only costed me about $7/month to have a website that I can do almost anything with! However, it's gotten pretty out-of-date on the backend and I did not have a real good way to fully automate a deployment without doing (in my opinion) a lot of work. Plus, a new friend at work saw my certificates were expried again and pushed me to start digging more into my new company's offerings (thanks Colton!).
+Previously, for about 10 years I have been using the same [Digital Ocean](https://digitalocean.com) Droplet as a Virtual Private Server (VPS) serving my site. I have no complaints and it's only costed me about $7/month to have a website that I can do almost anything with! However, it's gotten pretty out-of-date on the backend and I did not have a real good way to fully automate a deployment without doing (in my opinion) a lot of work. Plus, a new friend saw my certificates were expired again and pushed me to start digging more into better ways to manage those (thanks Colton!).
 
 ### But What Advantage Does The Edge Have? 
 
-Many people will be able to describe this better than me, but for me the main advantage is freeing up my VPS for updating and more experiments and hosting a faster blog around the world. 
+Many people will be able to describe this better than me, [Kats for example here](https://www.fastly.com/blog/no-origin-static-websites-at-the-edge), but for me the main advantage is freeing up my VPS for updating, more experiments, learning a new technology, and hosting a faster blog around the world. 
+
+### In Your Own Words...What Is The Edge?
 
 The Edge is essentially a CDN but instead of content sitting in cache around the world it is computed on the fly when requested at the site that's closest. Both a CDN and the Edge offer faster websites and I wanted to move closer to one repository and deploy method for the site. That and since my site is _so simple_ I opted for compute instead of a traditional CDN.
 
-Finally I could take advantage of things like [Certianly](ihttps://docs.fastly.com/products/certainly) and never have to worry about updating my TLS certificates again, something that definitely happened to me at least 2 a year while I was trying to get `certbot` to play nice with cron jobs.
+Finally I could take advantage of things like [Certianly](https://docs.fastly.com/products/certainly) and never have to worry about updating my TLS certificates again, something that definitely happened to me at least twice a year while I was trying to get `certbot` to play nice with cron jobs (not a knock against it, [Let's Encrypt](https://letsencrypt.org/) is an amazing resource and pretty much the only reason I've had a website for so long).
 
 ## How To Get Started 
 
-There's essentially two paths you have to work on in parallel the raw code for the blog and the setting up of the networking and Fastly Compute to serve said code from their network. 
+There's essentially two paths you have to work on in parallel the raw code for the blog and the setting up of the networking to point to the edge network to serve said code. 
 
 ### Some Warnings First 
 
 I am definitely not done with the blog that's for sure! As well as I am very certain there are better ways to do things but I wanted to give a little insight into how I learned and pieced together the information to get this working. If you have any suggestion throw in [an issue](https://github.com/deg4uss3r/hosfe.lt/issues) for me!
+
+**DISCLAIMER** I am a Fastly employee (and very new). So anything in the blog does not speak for Fastly itself but my own personal experience using the products they provide. 
 
 Finally, this blog and post (and my life) will be centered around Rust. There's plenty of resources for other languages (like [JavaScript](https://developer.fastly.com/learning/compute/javascript/) and [Go](https://developer.fastly.com/learning/compute/go/), but I know very little about those).
 
@@ -55,9 +59,11 @@ A quick note on the `include_str!()` [macro](https://doc.rust-lang.org/std/macro
 
 ### Okay, But How Do You Get Started? 
 
-So that is all simple enough but getting started was a little bit confusing for me (I could not find a specific set of coheisive steps to get started) so I'll walk through how I did it. Previous ceavat applies here, this is information I cobbeled together and not the _best_ way but a way that works. 
+So that is all simple enough but getting started was a little bit confusing for me (I could not find a specific set of coheisive steps to get started) so I'll walk through how I did it. Previous ceavates apply here, this is information I cobbeled together and not the _best_ way but a way that works for me.
 
-First, I created my [Fastly account](https://manage.fastly.com/home) (**disclaimer** this was free for me as a Fastly employee under small usages which this site _is incredibly small_ compared to what else we do). Your experience here will vary please check the prices and understand the cost before you proceed.
+Throught this guide I'll be using Fastly as mentioned previously. 
+
+First, I created my [Fastly account](https://manage.fastly.com/home). Your experience here will vary please check the prices and understand the cost before you proceed.
 
 Next, is to create a compute service. Do not worry about a domain or host for now you can set it to anything you want and change it later. We will utitlize the test generated link and setup the networking later. Make sure to save your `service_id` as it will be necessary to push an update to that newly created service.
 
@@ -93,7 +99,7 @@ As you get more complex or if you want to test the binary locally you can do so 
 
 That will create the binary and host it locally to `127.0.0.1:1313`.
 
-There's quite a few starter kits on the [Fastly Organization](https://github.com/search?q=%22fastly%2Fcompute-starter-kit%22+owner%3Afastly+&type=repositories) take a look through I just picked the one I found the simplest to get started!
+There's quite a few starter kits (including in different languages) on the [Fastly Organization](https://github.com/search?q=%22fastly%2Fcompute-starter-kit%22+owner%3Afastly+&type=repositories) take a look through I just picked the one I found the simplest to get started!
 
 #### Fastly's Template Structure Explained
 
@@ -103,12 +109,12 @@ If you fork one of Fastly's template repositories there's some files in there th
 
 `fastly.toml` - This is the controlling file for the options on your Compute service. You'll want to change the author, decription, name, and add in the field `service_id` (I originally thought this was a secret but common practice allows for this in the `toml`). Adding in `service_id` now means it will be easier to get the GitHub action working (coming in part 2) as well as you can remove the `--service_id` option from all future command line agruments. 
 
-`Cargo.toml` - I will assume you know the basics here but one thing you'll definitely want to change if you fork is the name (of the package), author, and I also upped the edition from `2018` to `2021` with no ill affects. I would recommend keeping [publish](https://doc.rust-lang.org/cargo/reference/manifest.html#the-publish-field) to `false`.
+`Cargo.toml` - I will assume you know the basics here but one thing you'll definitely want to change if you fork is the name (of the package), author, and I also upped the edition from `2018` to `2021` with no ill effects. I would recommend keeping [publish](https://doc.rust-lang.org/cargo/reference/manifest.html#the-publish-field) to `false`.
 
 `README` - I definitely forgot to change this at first, so learn from my mistakes! 
 
-`./.github/CODEOWNERS` - This is for the Fastly organization and template, change and/or remove this file it won't work anyways! 
+`./.github/CODEOWNERS` - This is for the Fastly organization and template, change and/or remove this file it won't work anyways!
 
-## Fin
+## To Be Continued...
 
 That is pretty much all you need to really get started with the edge using a test domain, In the next post (since this one has gotten a little longer than I anticipated) I'll explain my DNS and deployment setup. I hope this was helpful!
