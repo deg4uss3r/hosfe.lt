@@ -73,3 +73,6 @@ disableKinds = ["taxonomy", "term"]
     url = "resume/"
     weight = 30
 
+[markup.goldmark.renderer]
+  unsafe= true
+
