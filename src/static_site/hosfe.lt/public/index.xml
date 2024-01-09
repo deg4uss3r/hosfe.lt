@@ -7,8 +7,15 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>2023</copyright>
-    <lastBuildDate>Wed, 19 Apr 2023 21:19:00 +0000</lastBuildDate>
+    <lastBuildDate>Fri, 05 Jan 2024 09:18:47 -0500</lastBuildDate>
     <atom:link href="https://hosfe.lt/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>It&#39;s 2024 and This Blog is Now On The Edge</title>
+      <link>https://hosfe.lt/posts/edge/</link>
+      <pubDate>Fri, 05 Jan 2024 09:18:47 -0500</pubDate>
+      <guid>https://hosfe.lt/posts/edge/</guid>
+      <description>I&amp;rsquo;m Six Feet From The Edge and I&amp;rsquo;m Thinking&amp;hellip; Well, unlike that Classic Creed Song One Last Breath that was on the radio when I was a kid I&amp;rsquo;m actually on the edge! However, not in the way the song was intended, definitely in a technical sense.&#xA;I am taking advantage of learning at my new job by utilizing Fastly&amp;rsquo;s Edge Compute service and deploying this blog from their edge network making this site 100% delivered from a WASM pre-compiled binary.</description>
+    </item>
     <item>
       <title>About</title>
       <link>https://hosfe.lt/about/</link>

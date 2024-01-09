@@ -87,6 +87,11 @@ fn main(req: Request) -> Result<Response, Error> {
                 .with_content_type(mime::TEXT_HTML_UTF_8)
                 .with_body(include_str!("static_site/hosfe.lt/public/posts/story/index.html")))
         },
+        "/posts/edge/" => {
+            Ok(Response::from_status(StatusCode::OK)
+                .with_content_type(mime::TEXT_HTML_UTF_8)
+                .with_body(include_str!("static_site/hosfe.lt/public/posts/edge/index.html")))
+        },
         // Catch all other requests and return a 404.
         _ =>  {
             Ok(Response::from_status(StatusCode::NOT_FOUND)
