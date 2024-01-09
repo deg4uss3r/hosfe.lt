@@ -64,7 +64,7 @@ So that is all simple enough but getting started was a little bit confusing for 
 
 Throughout this guide I'll be using Fastly as mentioned previously. 
 
-First, I created my [Fastly account](https://manage.fastly.com/home). Your experience here will vary please check the prices and understand the cost before you proceed.
+First, I created my [Fastly account](https://manage.fastly.com/home) and set it up in the following way to create an edge compute service. 
 
 Next, is to create a compute service. Do not worry about a domain or host for now you can set it to anything you want and change it later. We will use the test generated link and setup the networking later. Make sure to save your `service_id` as it will be necessary to push an update to that newly created service.
 
@@ -72,7 +72,7 @@ To use the Fastly CLI (next step) you'll need a new token with permissions to do
 
 <p class="warning">make _sure_ you save this token off as soon as you navigate away from this screen you will lose access to display the token again for security reasons.</p>
 
-<p class="warning">make sure to keep this safe it's a secret and just like an AWS S3 key could cost you a lot of money if you leak it. I suggest immediately storing it in a password manager like <a href="https://1password.com" target=_blank>1Password</a> so you can access it safely and from the CLI (I'll show you how to do this as well). Finally, for security I do recommend letting this expire and generating a new one roughly every 6 months.</p>
+<p class="warning">make sure to keep this safe it's a secret. Just like any secret key, it could cost you money if you leak it. I suggest immediately storing it in a password manager like <a href="https://1password.com" target=_blank>1Password</a> so you can access it safely and from the CLI (I'll show you how to do this as well). Finally, for security I do recommend letting this expire and generating a new one roughly every 6 months.</p>
 
 After that I installed the [Fastly CLI](https://developer.fastly.com/reference/cli/) (or you can do everything from the web if you prefer but I like using CLIs so I do when I can). For me that was as simple as following the `brew install fastly/tap/fastly` command. 
 
