@@ -27,7 +27,7 @@ Many people will be able to describe this better than me, [Kats for example here
 
 The Edge is essentially a CDN but instead of content sitting in cache around the world it is computed on the fly when requested at the site that's closest. Both a CDN and the Edge offer faster websites and I wanted to move closer to one repository and deploy method for the site. That and since my site is _so simple_ I opted for compute instead of a traditional CDN.
 
-Finally I could take advantage of things like [Certianly](https://docs.fastly.com/products/certainly) and never have to worry about updating my TLS certificates again, something that definitely happened to me at least twice a year while I was trying to get `certbot` to play nice with cron jobs (not a knock against it, [Let's Encrypt](https://letsencrypt.org/) is an amazing resource and pretty much the only reason I've had a website for so long).
+Finally I could take advantage of things like [Certainly](https://docs.fastly.com/products/certainly) and never have to worry about updating my TLS certificates again, something that definitely happened to me at least twice a year while I was trying to get `certbot` to play nice with cron jobs (not a knock against it, [Let's Encrypt](https://letsencrypt.org/) is an amazing resource and pretty much the only reason I've had a website for so long).
 
 ## How To Get Started 
 
@@ -72,7 +72,7 @@ To use the Fastly CLI (next step) you'll need a new token with permissions to do
 
 <p class="warning">make _sure_ you save this token off as soon as you navigate away from this screen you will lose access to display the token again for security reasons.</p>
 
-<p class="warning">make sure to keep this safe it's a secret and just like an AWS S3 key could cost you a lot of money if you leak it. I suggest immediately storing it in a password manager like [1Password](https://1password.com/) so you can access it safely and from the CLI (I'll show you how to do this as well). Finally, for security I do recommend letting this expire and generating a new one roughly every 6 months.</p>
+<p class="warning">make sure to keep this safe it's a secret and just like an AWS S3 key could cost you a lot of money if you leak it. I suggest immediately storing it in a password manager like <a href="https://1password.com" target=_blank>1Password</a> so you can access it safely and from the CLI (I'll show you how to do this as well). Finally, for security I do recommend letting this expire and generating a new one roughly every 6 months.</p>
 
 After that I installed the [Fastly CLI](https://developer.fastly.com/reference/cli/) (or you can do everything from the web if you prefer but I like using CLIs so I do when I can). For me that was as simple as following the `brew install fastly/tap/fastly` command. 
 
@@ -98,7 +98,7 @@ As you get more complex or if you want to test the binary locally you can do so 
 ~# fastly compute serve
 ```
 
-<p class="idea">That will create the binary and host it locally to `127.0.0.1:7676`</p>
+<p class="idea">That will create the binary and host it locally to <code>127.0.0.1:7676</code></p>
 
 There's quite a few starter kits (including in different languages) on the [Fastly Organization](https://github.com/search?q=%22fastly%2Fcompute-starter-kit%22+owner%3Afastly+&type=repositories) take a look through I just picked the one I found the simplest to get started!
 
