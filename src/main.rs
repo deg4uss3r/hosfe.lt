@@ -89,7 +89,7 @@ fn main(req: Request) -> Result<Response, Error> {
         },
         // Catch all other requests and return a 404.
         _ =>  {
-            Ok(Response::from_status(StatusCode::OK)
+            Ok(Response::from_status(StatusCode::NOT_FOUND)
                 .with_content_type(mime::TEXT_HTML_UTF_8)
                 .with_body(include_str!("static_site/hosfe.lt/public/404.html")))
         },
