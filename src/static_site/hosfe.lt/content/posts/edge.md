@@ -70,9 +70,9 @@ Next, is to create a compute service. Do not worry about a domain or host for no
 
 To use the Fastly CLI (next step) you'll need a new token with permissions to do so. In the Fastly Management domain go to your Profile (upper right) > Account > API Tokens (lower left) and generate an API token with Global API Access both the first option (`Global`) for full control and Global Read (`global:read` is enable by default but write is not).
 
-**NOTICE** make _sure_ you save this token off as soon as you navigate away from this screen you will lose access to display the token again for security reasons.
+<p class="warning">make _sure_ you save this token off as soon as you navigate away from this screen you will lose access to display the token again for security reasons.</p>
 
-**WARNING** make sure to keep this safe it's a secret and just like an AWS S3 key could cost you a lot of money if you leak it. I suggest immediately storing it in a password manager like [1Password](https://1password.com/) so you can access it safely and from the CLI (I'll show you how to do this as well). Finally, for security I do recommend letting this expire and generating a new one roughly every 6 months.
+<p class="warning">make sure to keep this safe it's a secret and just like an AWS S3 key could cost you a lot of money if you leak it. I suggest immediately storing it in a password manager like [1Password](https://1password.com/) so you can access it safely and from the CLI (I'll show you how to do this as well). Finally, for security I do recommend letting this expire and generating a new one roughly every 6 months.</p>
 
 After that I installed the [Fastly CLI](https://developer.fastly.com/reference/cli/) (or you can do everything from the web if you prefer but I like using CLIs so I do when I can). For me that was as simple as following the `brew install fastly/tap/fastly` command. 
 
@@ -98,7 +98,7 @@ As you get more complex or if you want to test the binary locally you can do so 
 ~# fastly compute serve
 ```
 
-That will create the binary and host it locally to `127.0.0.1:7676`.
+<p class="idea">That will create the binary and host it locally to `127.0.0.1:7676`</p>
 
 There's quite a few starter kits (including in different languages) on the [Fastly Organization](https://github.com/search?q=%22fastly%2Fcompute-starter-kit%22+owner%3Afastly+&type=repositories) take a look through I just picked the one I found the simplest to get started!
 
