@@ -17,7 +17,7 @@ I am taking advantage of learning at my new job by utilizing [Fastly's](htttps:/
 
 ## Why I Put The Blog On The Edge
 
-Previously, for about 10 years I have been using the same [Digital Ocean](https://digitalocean.com) Droplet as a Virtual Private Server (VPS) serving my site. I have no complaints and it's only costed me about $7/month to have a website that I can do almost anything with! However, it's gotten pretty out-of-date on the backend and I did not have a real good way to fully automate a deployment without doing (in my opinion) a lot of work. Plus, a new friend saw my certificates were expired again and pushed me to start digging more into better ways to manage those (thanks Colton!).
+Previously, for about 10 years I have been using the same [Digital Ocean](https://digitalocean.com) Droplet as a Virtual Private Server (VPS) serving my site. I have no complaints and it has only been about $7/month to have a website that I can do almost anything with! However, it's gotten pretty out-of-date on the backend and I did not have a real good way to fully automate a deployment without doing (in my opinion) a lot of work. Plus, a new friend saw my certificates were expired again and pushed me to start digging more into better ways to manage those (thanks Colton!).
 
 ### But What Advantage Does The Edge Have? 
 
@@ -118,4 +118,4 @@ If you fork one of Fastly's template repositories there's some files in there th
 
 ## To Be Continued...
 
-That is pretty much all you need to really get started with the edge using a test domain, In the next post (since this one has gotten a little longer than I anticipated) I'll explain my DNS and deployment setup. I hope this was helpful!
+That is pretty much all you need to really get started with the edge using a test domain. In the next post (since this one has gotten a little longer than I anticipated) I'll explain my DNS and deployment setup. I hope this was helpful!
