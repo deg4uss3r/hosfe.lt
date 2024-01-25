@@ -1,0 +1,29 @@
+.warning {
+    color: black;
+    width: 11em;
+    &:before {
+            color: red;
+            font-weight: bold;
+            content: "⚠️ WARNING: ";
+    }
+    border: 3px solid #616773;
+    box-shadow: 9px 6px 4px #000000;
+    background-color: #737992;
+    padding: 7px 11px;
+    width: fit-content;
+}
+
+.idea {
+    color: black;
+    width: 11em;
+    &:before {
+            color: black;
+            font-weight: bold;
+            content: "💡: ";
+    }
+    border: 3px solid #616773;
+    box-shadow: 9px 6px 4px #000000;
+    background-color: #737992;
+    padding: 7px 11px;
+    width: fit-content;
+}

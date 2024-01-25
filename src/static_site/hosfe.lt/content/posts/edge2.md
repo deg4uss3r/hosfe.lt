@@ -40,7 +40,7 @@ Once, you have your TLS certificate setup you should be good to go! In order to 
 
 After we have created our TLS under the secure tab we need to know _which_ type of certificate we created. Going into the `Secure` App and `TLS Management` area we can click to view the certificate to see if we have a `t` or `s` type. 
 
-**// insert helpful image here** 
+![Which certificate type is active](/images/edge-post-2_certificate.png) 
 
 Once we know that we can give our subdomain a `CNAME` that Fastly will utilize over the whole edge network. If you need more help there's a lot more info on the [developer docs](https://docs.fastly.com/en/guides/working-with-cname-records-and-your-dns-provider#tls-enabled-hostnames)
 
