@@ -5,7 +5,6 @@ defaultContentLanguageInSubdir = false
 theme = "hermit-v2"
 
 pygmentsCodefences  = true
-pygmentsUseClasses  = true
 
 
 copyright = "2023"
@@ -76,3 +75,5 @@ disableKinds = ["taxonomy", "term"]
 [markup.goldmark.renderer]
   unsafe= true
 
+[markup.highlight]
+style="dracula"
