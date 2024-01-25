@@ -92,6 +92,16 @@ fn main(req: Request) -> Result<Response, Error> {
                 .with_content_type(mime::TEXT_HTML_UTF_8)
                 .with_body(include_str!("static_site/hosfe.lt/public/posts/edge/index.html")))
         },
+        "/posts/edge2/" => {
+            Ok(Response::from_status(StatusCode::OK)
+                .with_content_type(mime::TEXT_HTML_UTF_8)
+                .with_body(include_str!("static_site/hosfe.lt/public/posts/edge2/index.html")))
+        },
+        "/images/edge-post-2_certificate.png" => {
+            Ok(Response::from_status(StatusCode::OK)
+                .with_content_type(mime::IMAGE_PNG)
+                .with_body(include_bytes!("static_site/hosfe.lt/public/images/edge-post-2_certificate.png").as_slice()))
+        },
         // Catch all other requests and return a 404.
         _ =>  {
             Ok(Response::from_status(StatusCode::NOT_FOUND)
