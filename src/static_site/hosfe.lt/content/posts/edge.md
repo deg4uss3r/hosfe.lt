@@ -1,7 +1,6 @@
 ---
 title: "It's 2024 and This Blog is Now On The Edge"
 date: 2024-01-05T09:18:47-05:00
-custom_css: ["custom_css/custom.css"]
 draft: false
 toc: true
 images:
@@ -37,7 +36,9 @@ There's essentially two paths you have to work on in parallel the raw code for t
 
 I am definitely not done with the blog that's for sure! As well as I am very certain there are better ways to do things but I wanted to give a little insight into how I learned and pieced together the information to get this working. If you have any suggestion throw in [an issue](https://github.com/deg4uss3r/hosfe.lt/issues) for me!
 
-**DISCLAIMER** I am a Fastly employee (and very new). So anything in the blog does not speak for Fastly itself but my own personal experience using the products they provide. 
+{{< admonition type=success title="Info" >}}
+I am a Fastly employee (and very new). So anything in the blog does not speak for Fastly itself but my own personal experience using the products they provide. 
+{{< /admonition >}}
 
 Finally, this blog and post (and my life) will be centered around Rust. There's plenty of resources for other languages (like [JavaScript](https://developer.fastly.com/learning/compute/javascript/) and [Go](https://developer.fastly.com/learning/compute/go/), but I know very little about those).
 
@@ -70,16 +71,19 @@ Next, is to create a compute service. Do not worry about a domain or host for no
 
 To use the Fastly CLI (next step) you'll need a new token with permissions to do so. In the Fastly Management domain go to your Profile (upper right) > Account > API Tokens (lower left) and generate an API token with Global API Access both the first option (`Global`) for full control and Global Read (`global:read` is enable by default but write is not).
 
-<p class="warning">make _sure_ you save this token off as soon as you navigate away from this screen you will lose access to display the token again for security reasons.</p>
+{{< admonition type=danger title="WARNING" >}}make _sure_ you save this token off as soon as you navigate away from this screen you will lose access to display the token again for security reasons.
+{{< /admonition >}}
 
-<p class="warning">make sure to keep this safe it's a secret. Just like any secret key, it could cost you money if you leak it. I suggest immediately storing it in a password manager like <a href="https://1password.com" target=_blank>1Password</a> so you can access it safely and from the CLI (I'll show you how to do this as well). Finally, for security I do recommend letting this expire and generating a new one roughly every 6 months.</p>
+{{< admonition type=danger title="WARNING" >}}
+make sure to keep this safe it's a secret. Just like any secret key, it could cost you money if you leak it. I suggest immediately storing it in a password manager like [1Password](https://1password.com) so you can access it safely and from the CLI (I'll show you how to do this as well). Finally, for security I do recommend letting this expire and generating a new one roughly every 6 months.
+{{< /admonition >}}
 
 After that I installed the [Fastly CLI](https://developer.fastly.com/reference/cli/) (or you can do everything from the web if you prefer but I like using CLIs so I do when I can). For me that was as simple as following the `brew install fastly/tap/fastly` command. 
 
 Next up we'll test out a working CLI interface. I use 1Password's CLI to help insert secrets without leaking them (read the install instructions here: [1Password CLI](https://developer.1password.com/docs/cli/get-started/)); however, you can do what you are most comfortable with (both security and tool-wise). The command I would recommend running first is: 
 
 ```fish
-~# fastly whoami --token $(op item get "$YOUR_FASTLY_ITEM_NAME" --fields $YOUR_API_TOKEN_FIELD_NAME)
+~ fastly whoami --token $(op item get "$YOUR_FASTLY_ITEM_NAME" --fields $YOUR_API_TOKEN_FIELD_NAME)
 ```
 
 If you get an output with your name and email you are good to go! Otherwise it would appear the account token you've generated isn't working or you have a previous configuration somewhere that is messing with it. Reach out to the [Fastly Developer Docs](https://developer.fastly.com/) or the [Contact the community](https://community.fastly.com/) for additional help.
@@ -87,7 +91,7 @@ If you get an output with your name and email you are good to go! Otherwise it w
 Once you have a successful result from `whoami` you're ready to push to your service! I would recommend following the [Rust template repository](https://github.com/fastly/compute-starter-kit-rust-default) by forking it and pushing a single simple page (e.g. one match arm with the catchall as well) with anything you want. Do so by calling the following inside the template repo: 
 
 ```fish
-~# fastly compute publish --token $YOUR_TOKEN --service-id $YOUR_SERVICE_ID
+~ fastly compute publish --token $YOUR_TOKEN --service-id $YOUR_SERVICE_ID
 ```
 
 Once that deploys you can check it via the Management portal, click on Compute > Your Service > Version Number > Then you should see "Test Domain" next to your domain. 
@@ -95,10 +99,12 @@ Once that deploys you can check it via the Management portal, click on Compute >
 As you get more complex or if you want to test the binary locally you can do so very easily just: 
 
 ```fish
-~# fastly compute serve
+~ fastly compute serve
 ```
 
-<p class="idea">That will create the binary and host it locally to <code>127.0.0.1:7676</code></p>
+{{< admonition type=tip title="💡" >}}
+That will create the binary and host it locally to `127.0.0.1:7676`
+{{< /admonition >}}
 
 There's quite a few starter kits (including in different languages) on the [Fastly Organization](https://github.com/search?q=%22fastly%2Fcompute-starter-kit%22+owner%3Afastly+&type=repositories) take a look through I just picked the one I found the simplest to get started!
 
