@@ -5,7 +5,14 @@ draft: false
 toc: true
 images:
 tags: 
-  - untagged
+  - blog
+  - Fastly
+  - setup
+  - tech
+  - dns
+  - http
+  - wasm
+  - rust
 ---
 
 #  I'm Six Feet From The Edge and I'm Thinking... 

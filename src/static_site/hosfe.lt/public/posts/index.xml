@@ -6,8 +6,69 @@
 		<generator>Hugo -- gohugo.io</generator>
 		<language>en-us</language>
 		<copyright>2023</copyright>
-		<lastBuildDate>Fri, 05 Jan 2024 09:18:47 -0500</lastBuildDate>
+		<lastBuildDate>Mon, 22 Jan 2024 16:16:18 -0500</lastBuildDate>
 		<atom:link href="https://hosfe.lt/posts/index.xml" rel="self" type="application/rss+xml" />
+		
+		<item>
+			<title>This Blog is on the Edge Part 2: The Journey Continues</title>
+			<link>https://hosfe.lt/posts/edge2/</link>
+			<pubDate>Mon, 22 Jan 2024 16:16:18 -0500</pubDate>
+			
+			<guid>https://hosfe.lt/posts/edge2/</guid>
+			<description>Part 2: The Journey Continues This is part two of how I got my blog on the edge using Fastly&amp;rsquo;s Compute network. In this part I&amp;rsquo;ll go over DNS, certificate setup, and what I use to build and deploy the blog in more detail.
+Note This post will be pretty Fastly specific when it comes to DNS and managing the certificates In case you missed it the first part is here.</description>
+			<content type="html"><![CDATA[<h1 id="part-2-the-journey-continues">Part 2: The Journey Continues</h1>
+<p>This is part two of how I got my blog on the edge using Fastly&rsquo;s Compute network. In this part I&rsquo;ll go over DNS, certificate setup, and what I use to build and deploy the blog in more detail.</p>
+
+    <aside class="admonition note">
+        <div class="admonition-title">
+            <div class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-edit-2"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg></div><b>Note</b>
+        </div>
+        <div class="admonition-content">This post will be pretty Fastly specific when it comes to DNS and managing the certificates</div>
+    </aside>
+<p>In case you missed it the <a href="https://hosfe.lt/posts/edge/">first part is here</a>.</p>
+<h2 id="its-always-dns">It&rsquo;s Always DNS</h2>
+<p>I will admit I am not an expert here and what I have works for me and I had to run through a few trail and error runs to get what I wanted working.</p>
+<p>With that out of the way the first thing to do is take your domain name and in the <a href="https://manage.fastly.com">Fastly Admin Portal</a> on your compute service from part 1 add them to the  <code>Domains</code> section (this is the exact URL users will input when they want to visit your site).</p>
+<p>Here I have both (hosfe.lt and <a href="https://www.hosfe.lt">www.hosfe.lt</a>). In the Fastly world it is better to have a subdomain (<code>www</code> or the like, I am planning on using <code>ricky</code> in the near future). I&rsquo;ll explain why later.</p>
+<p>Once this is done move onto the <code>Hosts</code>, here is the specific host you want to use (this can be just your root level domain e.g. hosfe.lt) as it will be the one the certificate covers. Normally this would be your origin but since this site is completely on the edge we are just using it for certificate security at this point.</p>
+<h2 id="tls">TLS</h2>
+<p>Now to secure the site we need to use the <code>Secure</code> feature of the dashboard. Here we can generate certificates for our host and any subdomains (I used the wildcard domain since I&rsquo;ll probably be moving from the root to <code>ricky.hosfe.lt</code> in the future and adding more subdomains for experiements). If you can I would recommend doing your root plus whatever subdomains you want (or wildcard).</p>
+<p>This step will also required you to put in an <code>_acme-challenge</code> to verify you actually own your domain. I use Digital Ocean for my domain networking and throwing that <code>CNAME</code> in along with it&rsquo;s value was easy. The first certificate took about 10 minutes to verify and propagate after that they have been less than a minute.</p>
+<h2 id="dns-part-2-theres-always-a-part-2">DNS Part 2: There&rsquo;s Always a Part 2</h2>
+<p>Once, you have your TLS certificate setup you should be good to go! In order to take full advantage of the edge you need to use a subdomain. This is because root domains are not allows to have a <code>CNAME</code> entry for them and must point to an <code>A</code> or <code>AAAA</code> record. You <em>can</em> use Compute with a root domain and I&rsquo;ll show you how to find that here.</p>
+<h3 id="finding-your-cname-reference-for-subdomains">Finding Your CNAME Reference for Subdomains</h3>
+<p>After we have created our TLS under the secure tab we need to know <em>which</em> type of certificate we created. Going into the <code>Secure</code> App and <code>TLS Management</code> area we can click to view the certificate to see if we have a <code>t</code> or <code>s</code> type.</p>
+<p><img src="/images/edge-post-2_certificate.png" alt="Which certificate type is active"></p>
+<p>Once we know that we can give our subdomain a <code>CNAME</code> that Fastly will utilize over the whole edge network. If you need more help there&rsquo;s a lot more info on the <a href="https://docs.fastly.com/en/guides/working-with-cname-records-and-your-dns-provider#tls-enabled-hostnames">developer docs</a></p>
+<h3 id="finding-the-ip-address-for-your-a-record-and-root-domain">Finding the IP Address for your A Record and Root Domain</h3>
+<p>While we are here we can also give the root domain an IP address to hit if you are keen on using that. This won&rsquo;t take advantage of the whole edge at first so this is why I mentioned previously that it was better to use a subdomain. There&rsquo;s a lot more info <a href="https://docs.fastly.com/en/guides/using-fastly-with-apex-domains#when-you-have-tls-configured">here</a>.</p>
+<p>That&rsquo;s it, you should now have a working secured website that is completely on the Fastly Compute network! Honestly, it&rsquo;s more work than GeoCities was but given the flexibility I am exited for the <a href="https://www.rollingstone.com/culture/culture-commentary/internet-future-about-to-get-weird-1234938403/">internet to get weird again</a>.</p>
+<h2 id="hugo">Hugo</h2>
+<p>In case you&rsquo;re wondering the static site generator I am currently using is <a href="https://gohugo.io">Hugo</a>. The Theme is <a href="https://themes.gohugo.io/themes/hermit-v2/">hermit-v2</a>. Realistically I wanted a simple yet customizable theme and went with the first I found. I can also change it out pretty easily. Top that with an incredibly simple build system (literally compiling the site by just <code>hugo</code>) and I was sold.</p>
+<h2 id="how-to-deploy-and-github-actions">How to Deploy and GitHub Actions</h2>
+<p>Lastly, how I currently deploy the blog. You can see my <a href="https://github.com/deg4uss3r/hosfe.lt/blob/main/.github/workflows/test.yml">GitHub Actions YAML here</a>. The important part is that I split this in two stages. A test and check on each commit/PR and a deploy only on a tag. This helps me control when I actually push content to the blog.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#ff79c6">deploy</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">if</span>: |<span style="color:#f1fa8c">
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c">      startsWith(github.ref, &#39;refs/tags/v&#39;) &amp;&amp; needs.test.result == &#39;success&#39;</span>      
+</span></span></code></pre></div><p>I love that little <code>if</code> statement. It will only deploy if the test suite was successful on a tagged run.</p>
+<p>Further one thing I found confusing at first was I needed to use the Fastly <code>fastly/compute-actions@v5</code> action not just the <code>deploy</code> action as it still needs to compile and ship the WASM binary. After that it was pretty easy to get working, it will use the <code>fastly.toml</code> at the root of the project and off it goes just like doing it via the CLI (see <a href="https://hosfe.lt/posts/edge/">Part 1</a> to set that up).</p>
+
+    <aside class="admonition danger">
+        <div class="admonition-title">
+            <div class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-alert-triangle"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg></div><b>WARNING</b>
+        </div>
+        <div class="admonition-content">Don&rsquo;t forget to store your Fastly API token in GitHub Secrets so you don&rsquo;t expose it!</div>
+    </aside>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span>      <span style="color:#ff79c6">env</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#ff79c6">FASTLY_API_TOKEN</span>: ${{ secrets.FASTLY_API_TOKEN }}
+</span></span></code></pre></div><h2 id="whats-next">What&rsquo;s next?</h2>
+<p>First, there&rsquo;s some DNS changes I want to make which won&rsquo;t be too bad and shouldn&rsquo;t have an affect on the structure of the site. Moving from the root domain for the blog to <code>ricky.hosfe.lt</code> and making the root a landing page only.</p>
+<p>For the website I got some great suggestions and probably the first one will be compressing the included HTML text (and incorporated images) and shrinking the size of the WASM binary that gets uploaded (right now sitting at 1.78Mb). Though with the inline image I&rsquo;m sure a little larger as of today.</p>
+<p>Next, I would like to add much more logging and statistics to understand traffic flow and be able to play with observability and what&rsquo;s possible with the compute platform (with the added benefit of knowing how little people have read the blog).</p>
+<p>Slowly but surely I&rsquo;ll get to those but I also want to sprinkle in writing on some topics I want to chat about. So see you soon and I hope this helps, enjoy!</p>
+]]></content>
+		</item>
 		
 		<item>
 			<title>It&#39;s 2024 and This Blog is Now On The Edge</title>
@@ -42,11 +103,11 @@ I am taking advantage of learning at my new job by utilizing Fastly&amp;rsquo;s 
 <h3 id="the-blogs-code">The Blog&rsquo;s Code</h3>
 <p>The main focus of this section will be my <code>main.rs</code> Rust module (<a href="https://github.com/deg4uss3r/hosfe.lt/src/main.rs">on GitHub</a>). The source HTML is also in there but that is less interesting and I will briefly cover that later.</p>
 <p>The main content is very simple just a large <code>match</code> statement based off of the incoming request&rsquo;s path and then serving that in a response through pre-compiled HTML. essentially this boils down to very few lines of code:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-rust" data-lang="rust"><span class="line"><span class="cl"><span class="k">match</span><span class="w"> </span><span class="n">req</span><span class="p">.</span><span class="n">get_path</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="s">&#34;/&#34;</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="fm">include_str!</span><span class="p">(</span><span class="s">&#34;../index.html&#34;</span><span class="p">),</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="n">_</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="fm">include_str!</span><span class="p">(</span><span class="s">&#34;../404.html&#34;</span><span class="p">),</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w"> 
-</span></span></span></code></pre></div><p>Yes, astute readers will realize that every new page will need a new line to that match statement; however, it&rsquo;s a small price to pay for this being <em>incredibly simple</em>. I could setup some glob matches if I hosted the pages on an external service (e.g. S3, Droplet, etc.). That&rsquo;s something I&rsquo;d like to explore on a future date but for now this is fast, convenient, and fits nicely into a simple enough workflow for a very casual website updater 😅.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#ff79c6">match</span> req.get_path() {
+</span></span><span style="display:flex;"><span>  <span style="color:#f1fa8c">&#34;/&#34;</span> <span style="color:#ff79c6">=&gt;</span> include_str!(<span style="color:#f1fa8c">&#34;../index.html&#34;</span>),
+</span></span><span style="display:flex;"><span>  _ <span style="color:#ff79c6">=&gt;</span> include_str!(<span style="color:#f1fa8c">&#34;../404.html&#34;</span>),
+</span></span><span style="display:flex;"><span>} 
+</span></span></code></pre></div><p>Yes, astute readers will realize that every new page will need a new line to that match statement; however, it&rsquo;s a small price to pay for this being <em>incredibly simple</em>. I could setup some glob matches if I hosted the pages on an external service (e.g. S3, Droplet, etc.). That&rsquo;s something I&rsquo;d like to explore on a future date but for now this is fast, convenient, and fits nicely into a simple enough workflow for a very casual website updater 😅.</p>
 <p>A quick note on the <code>include_str!()</code> <a href="https://doc.rust-lang.org/std/macro.include_str.html">macro</a>. If you&rsquo;re not immediately familiar this is including the input file in the compiled binary. So while sacrificing binary size by including the text there&rsquo;s no file system lookup or network hit required to serve each request. It also has the advantage that if that file does not exist the binary will not compile so I cannot serve you a file that does not exist (but I can leave out files that <em>do</em> exist).</p>
 <h3 id="okay-but-how-do-you-get-started">Okay, But How Do You Get Started?</h3>
 <p>So that is all simple enough but getting started was a little bit confusing for me (I could not find a specific set of cohesive steps to get started) so I&rsquo;ll walk through how I did it. Previous caveats apply here, this is information I cobbled together and not the <em>best</em> way but a way that works for me.</p>
@@ -70,13 +131,13 @@ I am taking advantage of learning at my new job by utilizing Fastly&amp;rsquo;s 
     </aside>
 <p>After that I installed the <a href="https://developer.fastly.com/reference/cli/">Fastly CLI</a> (or you can do everything from the web if you prefer but I like using CLIs so I do when I can). For me that was as simple as following the <code>brew install fastly/tap/fastly</code> command.</p>
 <p>Next up we&rsquo;ll test out a working CLI interface. I use 1Password&rsquo;s CLI to help insert secrets without leaking them (read the install instructions here: <a href="https://developer.1password.com/docs/cli/get-started/">1Password CLI</a>); however, you can do what you are most comfortable with (both security and tool-wise). The command I would recommend running first is:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fish" data-lang="fish"><span class="line"><span class="cl">~ fastly whoami <span class="na">--token</span> <span class="nv">$(</span><span class="nf">op</span> item get <span class="s2">&#34;</span><span class="nv">$YOUR_FASTLY_ITEM_NAME</span><span class="s2">&#34;</span> <span class="na">--fields</span> <span class="nv">$YOUR_API_TOKEN_FIELD_NAME</span><span class="o">)</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fish" data-lang="fish"><span style="display:flex;"><span>~ fastly whoami <span style="color:#50fa7b">--token</span> <span style="color:#8be9fd;font-style:italic">$(</span><span style="color:#50fa7b">op</span> item get <span style="color:#f1fa8c">&#34;</span><span style="color:#8be9fd;font-style:italic">$YOUR_FASTLY_ITEM_NAME</span><span style="color:#f1fa8c">&#34;</span> <span style="color:#50fa7b">--fields</span> <span style="color:#8be9fd;font-style:italic">$YOUR_API_TOKEN_FIELD_NAME</span><span style="color:#ff79c6">)</span>
 </span></span></code></pre></div><p>If you get an output with your name and email you are good to go! Otherwise it would appear the account token you&rsquo;ve generated isn&rsquo;t working or you have a previous configuration somewhere that is messing with it. Reach out to the <a href="https://developer.fastly.com/">Fastly Developer Docs</a> or the <a href="https://community.fastly.com/">Contact the community</a> for additional help.</p>
 <p>Once you have a successful result from <code>whoami</code> you&rsquo;re ready to push to your service! I would recommend following the <a href="https://github.com/fastly/compute-starter-kit-rust-default">Rust template repository</a> by forking it and pushing a single simple page (e.g. one match arm with the catchall as well) with anything you want. Do so by calling the following inside the template repo:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fish" data-lang="fish"><span class="line"><span class="cl">~ fastly compute publish <span class="na">--token</span> <span class="nv">$YOUR_TOKEN</span> <span class="na">--service-id</span> <span class="nv">$YOUR_SERVICE_ID</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fish" data-lang="fish"><span style="display:flex;"><span>~ fastly compute publish <span style="color:#50fa7b">--token</span> <span style="color:#8be9fd;font-style:italic">$YOUR_TOKEN</span> <span style="color:#50fa7b">--service-id</span> <span style="color:#8be9fd;font-style:italic">$YOUR_SERVICE_ID</span>
 </span></span></code></pre></div><p>Once that deploys you can check it via the Management portal, click on Compute &gt; Your Service &gt; Version Number &gt; Then you should see &ldquo;Test Domain&rdquo; next to your domain.</p>
 <p>As you get more complex or if you want to test the binary locally you can do so very easily just:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fish" data-lang="fish"><span class="line"><span class="cl">~ fastly compute serve
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fish" data-lang="fish"><span style="display:flex;"><span>~ fastly compute serve
 </span></span></code></pre></div>
     <aside class="admonition tip">
         <div class="admonition-title">
