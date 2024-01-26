@@ -7,8 +7,15 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>2023</copyright>
-    <lastBuildDate>Fri, 05 Jan 2024 09:18:47 -0500</lastBuildDate>
+    <lastBuildDate>Mon, 22 Jan 2024 16:16:18 -0500</lastBuildDate>
     <atom:link href="https://hosfe.lt/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>This Blog is on the Edge Part 2: The Journey Continues</title>
+      <link>https://hosfe.lt/posts/edge2/</link>
+      <pubDate>Mon, 22 Jan 2024 16:16:18 -0500</pubDate>
+      <guid>https://hosfe.lt/posts/edge2/</guid>
+      <description>Part 2: The Journey Continues This is part two of how I got my blog on the edge using Fastly&amp;rsquo;s Compute network. In this part I&amp;rsquo;ll go over DNS, certificate setup, and what I use to build and deploy the blog in more detail.&#xA;Note This post will be pretty Fastly specific when it comes to DNS and managing the certificates In case you missed it the first part is here.</description>
+    </item>
     <item>
       <title>It&#39;s 2024 and This Blog is Now On The Edge</title>
       <link>https://hosfe.lt/posts/edge/</link>
