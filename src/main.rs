@@ -107,7 +107,7 @@ fn main(req: Request) -> Result<Response, Error> {
                 .with_content_type(mime::TEXT_HTML_UTF_8)
                 .with_body(include_str!("static_site/hosfe.lt/public/posts/adblocker/index.html")))
         },
-        "/images/edge-post-2_certificate.png" => {
+        "/images/honeycomnd.png" => {
             Ok(Response::from_status(StatusCode::OK)
                 .with_content_type(mime::IMAGE_PNG)
                 .with_body(include_bytes!("static_site/hosfe.lt/public/images/honeycomb.png").as_slice()))
