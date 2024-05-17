@@ -1,20 +1,20 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
 	<channel>
 		<title>Posts on Ricky Hosfelt</title>
-		<link>http://localhost:1313/posts/</link>
+		<link>https://hosfe.lt/posts/</link>
 		<description>Recent content in Posts on Ricky Hosfelt</description>
 		<generator>Hugo -- gohugo.io</generator>
 		<language>en-us</language>
 		<copyright>2023</copyright>
 		<lastBuildDate>Wed, 15 May 2024 00:00:00 +0000</lastBuildDate>
-		<atom:link href="http://localhost:1313/posts/index.xml" rel="self" type="application/rss+xml" />
+		<atom:link href="https://hosfe.lt/posts/index.xml" rel="self" type="application/rss+xml" />
 		
 		<item>
 			<title>Adblocker on an Edge Network</title>
-			<link>http://localhost:1313/posts/adblocker/</link>
+			<link>https://hosfe.lt/posts/adblocker/</link>
 			<pubDate>Wed, 15 May 2024 00:00:00 +0000</pubDate>
 			
-			<guid>http://localhost:1313/posts/adblocker/</guid>
+			<guid>https://hosfe.lt/posts/adblocker/</guid>
 			<description>Creating a Personal Adblocker over DNS over HTTPS Like most people I know, I really dislike advertisements. Especially the really creepy ones that are far too relevant to what you talked about not even searched for. Also, like most of my friends I own a Raspberry Pi and have it running the Pi-hole software (among other things).
 Well, I did have one setup. Ever since my move I have been a little lazy and do not have much room in my apartment for it let alone do not have drops for a ethernet interface.</description>
 			<content type="html"><![CDATA[<h2 id="creating-a-personal-adblocker-over-dns-over-https">Creating a Personal Adblocker over DNS over HTTPS</h2>
@@ -121,10 +121,10 @@ Well, I did have one setup. Ever since my move I have been a little lazy and do 
 		
 		<item>
 			<title>This Blog is on the Edge Part 2: The Journey Continues</title>
-			<link>http://localhost:1313/posts/edge2/</link>
+			<link>https://hosfe.lt/posts/edge2/</link>
 			<pubDate>Mon, 22 Jan 2024 16:16:18 -0500</pubDate>
 			
-			<guid>http://localhost:1313/posts/edge2/</guid>
+			<guid>https://hosfe.lt/posts/edge2/</guid>
 			<description>Part 2: The Journey Continues This is part two of how I got my blog on the edge using Fastly&amp;rsquo;s Compute network. In this part I&amp;rsquo;ll go over DNS, certificate setup, and what I use to build and deploy the blog in more detail.
 Note This post will be pretty Fastly specific when it comes to DNS and managing the certificates In case you missed it the first part is here.</description>
 			<content type="html"><![CDATA[<h1 id="part-2-the-journey-continues">Part 2: The Journey Continues</h1>
@@ -182,10 +182,10 @@ Note This post will be pretty Fastly specific when it comes to DNS and managing 
 		
 		<item>
 			<title>It&#39;s 2024 and This Blog is Now On The Edge</title>
-			<link>http://localhost:1313/posts/edge/</link>
+			<link>https://hosfe.lt/posts/edge/</link>
 			<pubDate>Fri, 05 Jan 2024 09:18:47 -0500</pubDate>
 			
-			<guid>http://localhost:1313/posts/edge/</guid>
+			<guid>https://hosfe.lt/posts/edge/</guid>
 			<description>I&amp;rsquo;m Six Feet From The Edge and I&amp;rsquo;m Thinking&amp;hellip; Well, unlike that Classic Creed Song One Last Breath that was on the radio when I was a kid I&amp;rsquo;m actually on the edge! However, not in the way the song was intended, definitely in a technical sense.
 I am taking advantage of learning at my new job by utilizing Fastly&amp;rsquo;s Edge Compute service and deploying this blog from their edge network making this site 100% delivered from a WASM pre-compiled binary.</description>
 			<content type="html"><![CDATA[<h1 id="im-six-feet-from-the-edge-and-im-thinking">I&rsquo;m Six Feet From The Edge and I&rsquo;m Thinking&hellip;</h1>
@@ -270,10 +270,10 @@ I am taking advantage of learning at my new job by utilizing Fastly&amp;rsquo;s 
 		
 		<item>
 			<title>My Path To Management</title>
-			<link>http://localhost:1313/posts/story/</link>
+			<link>https://hosfe.lt/posts/story/</link>
 			<pubDate>Wed, 19 Apr 2023 21:19:00 +0000</pubDate>
 			
-			<guid>http://localhost:1313/posts/story/</guid>
+			<guid>https://hosfe.lt/posts/story/</guid>
 			<description>From an early point in my career I have always wanted to lead. Not out of ego, but I have always loved helping others.
 In high school I was part of a small company (woo Spearfish Industries, thanks Steve and Dave ;)) that helped local businesses with the internet, websites, graphic design, and videography. This was my entry into computer science and I absolutely loved it I went from the lead graphic designer to the network admin and started to really enjoy setting up routers and explaining the settings to grandmas and business owners alike.</description>
 			<content type="html"><![CDATA[<p>From an early point in my <a href="https://ricky.hosfelt.dev/resume/">career</a> I have always wanted to lead. Not out of ego, but I have always loved helping others.</p>
