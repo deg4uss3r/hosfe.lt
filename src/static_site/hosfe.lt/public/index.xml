@@ -2,46 +2,53 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Ricky Hosfelt</title>
-    <link>https://hosfe.lt/</link>
+    <link>http://localhost:1313/</link>
     <description>Recent content on Ricky Hosfelt</description>
-    <generator>Hugo -- gohugo.io</generator>
+    <generator>Hugo</generator>
     <language>en-us</language>
     <copyright>2023</copyright>
-    <lastBuildDate>Mon, 22 Jan 2024 16:16:18 -0500</lastBuildDate>
-    <atom:link href="https://hosfe.lt/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Wed, 15 May 2024 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://localhost:1313/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Adblocker on an Edge Network</title>
+      <link>http://localhost:1313/posts/adblocker/</link>
+      <pubDate>Wed, 15 May 2024 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/adblocker/</guid>
+      <description>Creating a Personal Adblocker over DNS over HTTPS Like most people I know, I really dislike advertisements. Especially the really creepy ones that are far too relevant to what you talked about not even searched for. Also, like most of my friends I own a Raspberry Pi and have it running the Pi-hole software (among other things).&#xA;Well, I did have one setup. Ever since my move I have been a little lazy and do not have much room in my apartment for it let alone do not have drops for a ethernet interface.</description>
+    </item>
     <item>
       <title>This Blog is on the Edge Part 2: The Journey Continues</title>
-      <link>https://hosfe.lt/posts/edge2/</link>
+      <link>http://localhost:1313/posts/edge2/</link>
       <pubDate>Mon, 22 Jan 2024 16:16:18 -0500</pubDate>
-      <guid>https://hosfe.lt/posts/edge2/</guid>
+      <guid>http://localhost:1313/posts/edge2/</guid>
       <description>Part 2: The Journey Continues This is part two of how I got my blog on the edge using Fastly&amp;rsquo;s Compute network. In this part I&amp;rsquo;ll go over DNS, certificate setup, and what I use to build and deploy the blog in more detail.&#xA;Note This post will be pretty Fastly specific when it comes to DNS and managing the certificates In case you missed it the first part is here.</description>
     </item>
     <item>
       <title>It&#39;s 2024 and This Blog is Now On The Edge</title>
-      <link>https://hosfe.lt/posts/edge/</link>
+      <link>http://localhost:1313/posts/edge/</link>
       <pubDate>Fri, 05 Jan 2024 09:18:47 -0500</pubDate>
-      <guid>https://hosfe.lt/posts/edge/</guid>
+      <guid>http://localhost:1313/posts/edge/</guid>
       <description>I&amp;rsquo;m Six Feet From The Edge and I&amp;rsquo;m Thinking&amp;hellip; Well, unlike that Classic Creed Song One Last Breath that was on the radio when I was a kid I&amp;rsquo;m actually on the edge! However, not in the way the song was intended, definitely in a technical sense.&#xA;I am taking advantage of learning at my new job by utilizing Fastly&amp;rsquo;s Edge Compute service and deploying this blog from their edge network making this site 100% delivered from a WASM pre-compiled binary.</description>
     </item>
     <item>
       <title>About</title>
-      <link>https://hosfe.lt/about/</link>
+      <link>http://localhost:1313/about/</link>
       <pubDate>Wed, 27 Dec 2023 14:41:52 -0500</pubDate>
-      <guid>https://hosfe.lt/about/</guid>
+      <guid>http://localhost:1313/about/</guid>
       <description>Hello! I am Ricky Hosfelt a career software engineer and now an Engineering Manager with a passion for Rust, Networking, and helping others. I hope to write more on all of the above plus some other random interests of mine (watches, hockey, cars, video games, etc) in the future. Thanks for stopping by :D</description>
     </item>
     <item>
       <title>My Path To Management</title>
-      <link>https://hosfe.lt/posts/story/</link>
+      <link>http://localhost:1313/posts/story/</link>
       <pubDate>Wed, 19 Apr 2023 21:19:00 +0000</pubDate>
-      <guid>https://hosfe.lt/posts/story/</guid>
+      <guid>http://localhost:1313/posts/story/</guid>
       <description>From an early point in my career I have always wanted to lead. Not out of ego, but I have always loved helping others.&#xA;In high school I was part of a small company (woo Spearfish Industries, thanks Steve and Dave ;)) that helped local businesses with the internet, websites, graphic design, and videography. This was my entry into computer science and I absolutely loved it I went from the lead graphic designer to the network admin and started to really enjoy setting up routers and explaining the settings to grandmas and business owners alike.</description>
     </item>
     <item>
       <title>Ricky Hosfelt</title>
-      <link>https://hosfe.lt/resume/</link>
+      <link>http://localhost:1313/resume/</link>
       <pubDate>Wed, 01 Mar 2023 17:20:05 +0000</pubDate>
-      <guid>https://hosfe.lt/resume/</guid>
+      <guid>http://localhost:1313/resume/</guid>
       <description>Engineering Manager &amp;amp;&amp;amp; Software Developer Links Github Linkedin Mastodon Contact Ricky@Hosfe.lt Phone number available on request Interests Rust, Networking, Open Source Software, Command Line Interfaces, Tooling, DevOps, Python, Linux/Unix, Security/Privacy, Technology for Social Good&#xA;Work Experience Engineering Manager (20231113 - Present) - Fastly Managing the Media Applications Team Engineering Manger (20220801 - 20231013) - 1Password Job change due to Technology Department reorganization Current Manager of the Frameworks team in Product, Frameworks, and Tooling organization Manages team of 10 Experience building an organization from scratch with peer EMs under the direction of the CTO Focuses on scalability, performance, and correctness of APIs within 1Password code bases (Rust, Swift, Kotlin, TypeScript) Engineering Manager (20210901 - 20220801) – 1Password Managing the Apple Client Apps team [8 developers] Coaching iOS developers through 1-on-1s, general developer advice, and team building activities Spearheading a hiring initiative to standardize the hiring process; including educating new interviewers, helping avoid bias, and increasing diversity at the company Assisting the Swift developers understand Rust and contributing to the Rust codebase by fixing small issues and reviewing code Senior Developer (20200617 - 20210901) – 1Password Senior Rust Developer for the common backend Worked on platform team in charge of lower layer functions within the codebase Co-engineered localization build script driving all translations throughout all client apps Lead developer for Medical Records implementation &amp;ndash; enabled all clients to view and add medical records item types (new and legacy) as well as the backend server logic Pushed forward CI development practices by helping the lead CI engineer with Rust tooling and updates Software Developer (20190215 - 20200529) – Carnegie Mellon Software Engineering Institute (SEI) Lead Software Developer for xView2 Challenge Developed and maintained xView2 baseline code Interviewed and selected data labelling contractor Maintained discord challenge of hundred of solvers and answered questions on the baseline code, docker, and the challenge Computer Engineer (20150619 - 20190207) – Department of Defense Selected for Field Assignment to United Kingdom Reverse engineered computer network protocols for traffic identification Engineered network protocol library to parse and manipulate packets (Rust) Mentored interns for six week tours Lead Analyst (20141018 - 20150618) – Department of Defense Prototyped and deployed parallel network protocol classification algorithm over Hadoop cluster Instructed beginner, intermediate, and expert protocol analysis courses Taught analysis techniques to interns and supervised their projects and progress Analyst (20130311 - 20141017) – Department of Defense Analyzed protocols to fully understand technology Automated packet identification with python programs Technical Recruiter (20110118 - 20130310) – Department of Defense Hired, maintained, and coordinated the Cooperative Education Program for 120 STEM positions Developed and sustained website to streamline students transition to full time employees Programming Languages Rust Python Bash Open Source Member of Command-Line Working Group (Rust) Founder of Machine Learning Working Group (Rust) Maintained cargo-outdated (Rust) Cargo plugin that checks if any project dependencies are out-of-date Creating new features, reviewing PRs, and addressing issues 23K Downloads from Crates.</description>
     </item>
   </channel>

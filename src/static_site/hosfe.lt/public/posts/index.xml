@@ -1,20 +1,130 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
 	<channel>
 		<title>Posts on Ricky Hosfelt</title>
-		<link>https://hosfe.lt/posts/</link>
+		<link>http://localhost:1313/posts/</link>
 		<description>Recent content in Posts on Ricky Hosfelt</description>
 		<generator>Hugo -- gohugo.io</generator>
 		<language>en-us</language>
 		<copyright>2023</copyright>
-		<lastBuildDate>Mon, 22 Jan 2024 16:16:18 -0500</lastBuildDate>
-		<atom:link href="https://hosfe.lt/posts/index.xml" rel="self" type="application/rss+xml" />
+		<lastBuildDate>Wed, 15 May 2024 00:00:00 +0000</lastBuildDate>
+		<atom:link href="http://localhost:1313/posts/index.xml" rel="self" type="application/rss+xml" />
+		
+		<item>
+			<title>Adblocker on an Edge Network</title>
+			<link>http://localhost:1313/posts/adblocker/</link>
+			<pubDate>Wed, 15 May 2024 00:00:00 +0000</pubDate>
+			
+			<guid>http://localhost:1313/posts/adblocker/</guid>
+			<description>Creating a Personal Adblocker over DNS over HTTPS Like most people I know, I really dislike advertisements. Especially the really creepy ones that are far too relevant to what you talked about not even searched for. Also, like most of my friends I own a Raspberry Pi and have it running the Pi-hole software (among other things).
+Well, I did have one setup. Ever since my move I have been a little lazy and do not have much room in my apartment for it let alone do not have drops for a ethernet interface.</description>
+			<content type="html"><![CDATA[<h2 id="creating-a-personal-adblocker-over-dns-over-https">Creating a Personal Adblocker over DNS over HTTPS</h2>
+<p>Like most people I know, I really dislike advertisements. Especially the really creepy ones that are far too relevant to what you <em>talked</em> about not even searched for. Also, like most of my friends I own a <a href="https://www.raspberrypi.org/">Raspberry Pi</a> and have it running the <a href="https://pi-hole.net/">Pi-hole</a> software (among other things).</p>
+<p>Well, I <em>did</em> have one setup. Ever since my move I have been a little lazy and do not have much room in my apartment for it let alone do not have drops for a ethernet interface. I also wanted a setup that worked well on the go without too much hassle to tunnel into my home network.</p>
+<p>So I took a look at what my options were and decided to try to the <a href="https://www.fastly.com/products/compute">Fastly&rsquo;s Compute</a> network, DNS over HTTPS, and WASM to get the job done. So what I came up with was a DNS over HTTPS provider with built in Pi-hole-style adblocking. You can take a look at the code in the <a href="https://github.com/deg4uss3r/wasm-dns-https">repo</a>, I&rsquo;ll go over a lot of the stuff in the <code>README</code> as well as some tradeoffs I had to make with the original idea for now.</p>
+<h2 id="why-doh">Why DoH</h2>
+<p>Aside from being a Simpsons fan, DNS queries over HTTPS (<a href="https://www.rfc-editor.org/rfc/rfc8484">RFC 8484</a>) is a relatively simple spec and implementation and when done properly can be secure. That plus it works nicely using an edge network that can be distributed around the world. Making this a really attractive, fast, and cheap solution! That coupled with being able to block Ads at the DNS level leads to a great solution.</p>
+<h2 id="original-design-and-tradeoffs">Original Design and Tradeoffs</h2>
+<p>Originally, I wanted to send raw DNS packets directly to the edge DNS resolver for authoritative answers; however, WASI-Sockets just <a href="https://github.com/WebAssembly/wasi-sockets">released their specification</a> into the preview when I was beginning to look into this personal project so that made it not quite ready for prime time, but I look forward to seeing that in stable in the future!</p>
+<p>Due to that limitation, I had to go to just pass through requests using another service. Although I am mostly Google-free (I still have my Gmail address I got in the beta back in highschool 👉😎👉) I opted for the <a href="https://developers.google.com/speed/public-dns/docs/doh/json">Google API</a> since it is clean, well done, and has a lot of options I can use in the future.</p>
+<p>Therefore the flow of a request looks like this:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>┌───────────────────────────┐                  ┌───────────────────────────┐                 ┌───────────────────────────┐
+</span></span><span style="display:flex;"><span>│                           │                  │                           │                 │                           │
+</span></span><span style="display:flex;"><span>│                           │                  │                           │                 │                           │
+</span></span><span style="display:flex;"><span>│ RECEIVE REQUEST FROM USER ├──────────────────►  CHECK IF URL SHOULD BE   ├────────────────X│     BLOCK URL AND SEND    │
+</span></span><span style="display:flex;"><span>│                           │                  │           BLOCKED         │                 │       RESPONSE (418)      │
+</span></span><span style="display:flex;"><span>│                           │                  │                           │                 │                           │
+</span></span><span style="display:flex;"><span>└───────────────────────────┘                  └──────────────┬────────────┘                 └───────────────────────────┘
+</span></span><span style="display:flex;"><span>                                                              │                                                           
+</span></span><span style="display:flex;"><span>                                                              │                                                           
+</span></span><span style="display:flex;"><span>                                                              │                                                           
+</span></span><span style="display:flex;"><span>                                                              │                                                           
+</span></span><span style="display:flex;"><span>                                                              │                                                           
+</span></span><span style="display:flex;"><span>                                                              │                                                           
+</span></span><span style="display:flex;"><span>                                                              │                                                           
+</span></span><span style="display:flex;"><span>                                                              │                                                           
+</span></span><span style="display:flex;"><span>                                                ┌─────────────▼─────────────┐                                             
+</span></span><span style="display:flex;"><span>                                                │                           │                                             
+</span></span><span style="display:flex;"><span>                                                │                           │                                             
+</span></span><span style="display:flex;"><span>                                                │  CHECK CACHE FOR RESPONSE │                                             
+</span></span><span style="display:flex;"><span>                                                │                           │                                             
+</span></span><span style="display:flex;"><span>                                                │                           │                                             
+</span></span><span style="display:flex;"><span>                                                └─────────────┬─────────────┘                                             
+</span></span><span style="display:flex;"><span>                                                              │                                                           
+</span></span><span style="display:flex;"><span>                                                              │                                                           
+</span></span><span style="display:flex;"><span>                                                              │                                                           
+</span></span><span style="display:flex;"><span>                                                              │                                                           
+</span></span><span style="display:flex;"><span>                                                              │                                                           
+</span></span><span style="display:flex;"><span>                                                ┌─────────────┴──────────────┐                                            
+</span></span><span style="display:flex;"><span>                                                │                            │                                            
+</span></span><span style="display:flex;"><span>                                                │                            │                                            
+</span></span><span style="display:flex;"><span>                                                │                            │                                            
+</span></span><span style="display:flex;"><span>                                                │                            │                                            
+</span></span><span style="display:flex;"><span>                                 ┌──────────────▼────────────┐ ┌─────────────▼─────────────┐                              
+</span></span><span style="display:flex;"><span>                                 │                           │ │                           │                              
+</span></span><span style="display:flex;"><span>                                 │                           │ │                           │                              
+</span></span><span style="display:flex;"><span>                                 │  SEND REQUEST TO GOOGLE   │ │  SERVE FROM CACHE (200)   │                              
+</span></span><span style="display:flex;"><span>                                 │                           │ │                           │                              
+</span></span><span style="display:flex;"><span>                                 │                           │ │                           │                              
+</span></span><span style="display:flex;"><span>                                 └──────────────┬────────────┘ └───────────────────────────┘                              
+</span></span><span style="display:flex;"><span>                                                │                                                                         
+</span></span><span style="display:flex;"><span>                                                │                                                                         
+</span></span><span style="display:flex;"><span>                                 ┌──────────────▼────────────┐                                                            
+</span></span><span style="display:flex;"><span>                                 │                           │                                                            
+</span></span><span style="display:flex;"><span>                                 │                           │                                                            
+</span></span><span style="display:flex;"><span>                                 │  FORWARD RESPONSE (200)   │                                                            
+</span></span><span style="display:flex;"><span>                                 │                           │                                                            
+</span></span><span style="display:flex;"><span>                                 │                           │                                                            
+</span></span><span style="display:flex;"><span>                                 └───────────────────────────┘                                                            
+</span></span></code></pre></div><h3 id="another-tradeoff">Another Tradeoff</h3>
+<p>Another current tradeoff I am making while I look to get a KV Store implementation is I am storing the &ldquo;massive&rdquo; 5.1MB list of blocked URLs in memory during each spin up of of the application. Obviously this is inefficient but the list was too large for the normal storage options (and honestly that would be a pretty big abuse of things like config store).</p>
+<p>The current plan is to use a KV store that is accessible from every instance, and if needed utilize a <a href="https://en.wikipedia.org/wiki/K-anonymity">k-anonymous</a> key to reliable get back a set of values that will contain the result but be able to pack more values into each KV pair if it is too large still. I have left this for a future implementation/optimization for now.</p>
+<p>Another thing I would like to do is make a script that I can easily add to the list (or remove if necessary). It will probably be a separate script to do so but it will be nice since a lot of the editors struggle with the size of this file and doing so with the <a href="https://www.fastly.com/documentation/reference/cli/kv-store-entry/">Fastly CLI</a> appears easy.</p>
+<h3 id="fun-optimization">Fun Optimization</h3>
+<p>A very neat optimization of using an edge network (especially Fastly&rsquo;s unique architecture) is the ability to store results in cache effectively skipping the lookup to Google&rsquo;s APIs all together and <em>more than halving</em> (from about 90,000μs to about 40,000μs (about .1 -&gt; 0.04 seconds)) the response time from a full lookup, that&rsquo;s a pretty incredible speedup for just a few lines of code!</p>
+<p>This is implemented to only store the URL in cache after the result is returned to the user so I never store anything that is blocked (and a blocked URL exits immediately after the positive lookup to the array). This is a pretty neat feature but does have a slight hiccup that at each Point of Presence (POP) has an individual cache, so for example if I am traveling I won&rsquo;t get the same immediate benefits of the quick lookups on the first response. However any subsequent lookups will be stored an easily revisited. The other issue is cache is used for everyone so anything we access here if unpopular can be overridden, so the more I use it the faster it would get!</p>
+<h3 id="logging-and-observability">Logging and Observability</h3>
+<p>In order to try out a new observability platform during this project I started using <a href="https://honeycomb.io">honeycomb</a>. This leads us into a warning:</p>
+
+    <aside class="admonition danger">
+        <div class="admonition-title">
+            <div class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-alert-triangle"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg></div><b>WARNING</b>
+        </div>
+        <div class="admonition-content"><p>Please do not use my service if you care anything about privacy as since this is a personal project I can see all of the requests and where they come from.</p>
+<p>It is a (far) future optimization for me to make this more privacy conscious.</p>
+</div>
+    </aside>
+<p>That being said I have some really good observability in place with support for dynamically logging any additional fields. Using the following option in the Honeycomb UI:</p>
+<p><img src="/images/honeycomb.png" alt="Image on Honeycomb&rsquo;s site showing an unpack nested JSON toggle and the depth to look for" title="Image on Honeycomb's site showing an unpack nested JSON toggle and the depth to look for"></p>
+<p>One trip-up I hit while getting logging setup was I <em>had</em> to send a specific shape to the Honeycomb service for it to be parsed properly, it wasn&rsquo;t explicitly said in any of the documentation I saw and it&rsquo;s fairly simple but it has to look like this:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#ff79c6">struct</span> <span style="color:#50fa7b">LogFormat</span> {
+</span></span><span style="display:flex;"><span>    time: <span style="color:#8be9fd;font-style:italic">String</span>,
+</span></span><span style="display:flex;"><span>    data: <span style="color:#50fa7b">LogData</span>,
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>The <code>LogData</code> there can be anything (I use 2 levels of nested structures) that can be deserialized into JSON but it must take that overall shape to be parsed correctly. For example here is the shape of my <code>LogData</code>:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#ff79c6">struct</span> <span style="color:#50fa7b">LogData</span> {
+</span></span><span style="display:flex;"><span>    id: <span style="color:#8be9fd;font-style:italic">String</span>,
+</span></span><span style="display:flex;"><span>    level: <span style="color:#8be9fd;font-style:italic">String</span>,
+</span></span><span style="display:flex;"><span>    fastly_version: <span style="color:#8be9fd">u32</span>,
+</span></span><span style="display:flex;"><span>    message: <span style="color:#8be9fd;font-style:italic">String</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">#[serde(flatten, skip_serializing_if = </span><span style="color:#f1fa8c">&#34;HashMap::is_empty&#34;</span><span style="color:#ff79c6">)]</span>
+</span></span><span style="display:flex;"><span>    additional_info: <span style="color:#50fa7b">HashMap</span><span style="color:#ff79c6">&lt;</span><span style="color:#8be9fd;font-style:italic">String</span>, <span style="color:#8be9fd;font-style:italic">String</span><span style="color:#ff79c6">&gt;</span>,
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>This gives me a good way (since the ID is a Fastly <code>$ENVAR</code> constant per compute request) to find the flow of a single request and know which version of my application this processed on (helpful if I am looking at an update and waiting for the new version to deploy).</p>
+<h2 id="results">Results</h2>
+<p>So onto the results! I have not started using this as a majority daily driver yet (I am using Firefox developer edition to test this alongside vanilla Firefox). I need to get a verified <code>plist</code> entry for my personal devices to use this system-wide and not just through the browser to be more useful. The short of the results are I am seeing the average page load to be about <em>twice as fast</em>, when they are served from cache about <em>4 times as fast</em> for some of the worse offenders. With no &ldquo;we see you have an adblocker&rdquo; interstitial or pop ups!</p>
+<p>I won&rsquo;t get into what I think that does to the web but I am glad I have yet-another-way™️ to block advertisements that I do not want to see and ads no daily value to my web experience.</p>
+<p>Overall, this was a really fun project. I learned a ton about DNS, working on an edge networking, OS configuration, and observability.</p>
+<h2 id="next-steps">Next Steps</h2>
+<p>I am looking forward to making this a bit more secure and setting up some <code>plist</code>s to run this with signing on MacOS and iOS so I can use this all the time. I&rsquo;ll throw some updates on the repository when that&rsquo;s done, stay tuned or file an issue if you notice anything that could be improved!</p>
+]]></content>
+		</item>
 		
 		<item>
 			<title>This Blog is on the Edge Part 2: The Journey Continues</title>
-			<link>https://hosfe.lt/posts/edge2/</link>
+			<link>http://localhost:1313/posts/edge2/</link>
 			<pubDate>Mon, 22 Jan 2024 16:16:18 -0500</pubDate>
 			
-			<guid>https://hosfe.lt/posts/edge2/</guid>
+			<guid>http://localhost:1313/posts/edge2/</guid>
 			<description>Part 2: The Journey Continues This is part two of how I got my blog on the edge using Fastly&amp;rsquo;s Compute network. In this part I&amp;rsquo;ll go over DNS, certificate setup, and what I use to build and deploy the blog in more detail.
 Note This post will be pretty Fastly specific when it comes to DNS and managing the certificates In case you missed it the first part is here.</description>
 			<content type="html"><![CDATA[<h1 id="part-2-the-journey-continues">Part 2: The Journey Continues</h1>
@@ -72,10 +182,10 @@ Note This post will be pretty Fastly specific when it comes to DNS and managing 
 		
 		<item>
 			<title>It&#39;s 2024 and This Blog is Now On The Edge</title>
-			<link>https://hosfe.lt/posts/edge/</link>
+			<link>http://localhost:1313/posts/edge/</link>
 			<pubDate>Fri, 05 Jan 2024 09:18:47 -0500</pubDate>
 			
-			<guid>https://hosfe.lt/posts/edge/</guid>
+			<guid>http://localhost:1313/posts/edge/</guid>
 			<description>I&amp;rsquo;m Six Feet From The Edge and I&amp;rsquo;m Thinking&amp;hellip; Well, unlike that Classic Creed Song One Last Breath that was on the radio when I was a kid I&amp;rsquo;m actually on the edge! However, not in the way the song was intended, definitely in a technical sense.
 I am taking advantage of learning at my new job by utilizing Fastly&amp;rsquo;s Edge Compute service and deploying this blog from their edge network making this site 100% delivered from a WASM pre-compiled binary.</description>
 			<content type="html"><![CDATA[<h1 id="im-six-feet-from-the-edge-and-im-thinking">I&rsquo;m Six Feet From The Edge and I&rsquo;m Thinking&hellip;</h1>
@@ -160,10 +270,10 @@ I am taking advantage of learning at my new job by utilizing Fastly&amp;rsquo;s 
 		
 		<item>
 			<title>My Path To Management</title>
-			<link>https://hosfe.lt/posts/story/</link>
+			<link>http://localhost:1313/posts/story/</link>
 			<pubDate>Wed, 19 Apr 2023 21:19:00 +0000</pubDate>
 			
-			<guid>https://hosfe.lt/posts/story/</guid>
+			<guid>http://localhost:1313/posts/story/</guid>
 			<description>From an early point in my career I have always wanted to lead. Not out of ego, but I have always loved helping others.
 In high school I was part of a small company (woo Spearfish Industries, thanks Steve and Dave ;)) that helped local businesses with the internet, websites, graphic design, and videography. This was my entry into computer science and I absolutely loved it I went from the lead graphic designer to the network admin and started to really enjoy setting up routers and explaining the settings to grandmas and business owners alike.</description>
 			<content type="html"><![CDATA[<p>From an early point in my <a href="https://ricky.hosfelt.dev/resume/">career</a> I have always wanted to lead. Not out of ego, but I have always loved helping others.</p>
