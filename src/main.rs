@@ -1,5 +1,13 @@
 use fastly::http::{header, Method, StatusCode};
-use fastly::{mime, Error, Request, Response};
+use fastly::{kv_store::KVStore, mime, Error, Request, Response};
+
+const RESOURCE_KV_STORE_NAME: &str = "hosfelt-resources";
+
+fn fetch_resource_from_kv(key: &str) -> String {
+    let store = KVStore::open(RESOURCE_KV_STORE_NAME).unwrap();
+    let mut kv_result = store.unwrap().lookup(key).unwrap();
+    kv_result.take_body().into_string()
+}
 
 #[fastly::main]
 fn main(req: Request) -> Result<Response, Error> {
@@ -61,13 +69,13 @@ fn main(req: Request) -> Result<Response, Error> {
             Ok(Response::from_status(StatusCode::OK)
                 .with_header(header::ACCESS_CONTROL_ALLOW_ORIGIN, "https://www.hosfe.lt")
                 .with_content_type(mime::TEXT_CSS_UTF_8)
-                .with_body(include_str!("static_site/hosfe.lt/public/css/style.min.dbbe08cb3b07bbce02de1a13a57d4221bb75487e75b0d1a5196a5353f7135921.css")))
+                .with_body(fetch_resource_from_kv("style.min.dbbe08cb3b07bbce02de1a13a57d4221bb75487e75b0d1a5196a5353f7135921.css")))
         }
         "/css/style.min.2faed4cf7533c5236bf011e885da2e0c2670dea54d80f6b5ff1f370613f0983a.css" => {
             Ok(Response::from_status(StatusCode::OK)
                 .with_header(header::ACCESS_CONTROL_ALLOW_ORIGIN, "https://www.hosfe.lt")
                 .with_content_type(mime::TEXT_CSS_UTF_8)
-                .with_body(include_str!("static_site/hosfe.lt/public/css/style.min.2faed4cf7533c5236bf011e885da2e0c2670dea54d80f6b5ff1f370613f0983a.css")))
+                .with_body(fetch_resource_from_kv("style.min.2faed4cf7533c5236bf011e885da2e0c2670dea54d80f6b5ff1f370613f0983a.css")))
         },
         "/js/bundle.min.038214de9d568246fadcfeb06c69349925de3209f332ec123861b6aa031d63c6.js" => {
             Ok(Response::from_status(StatusCode::OK)
