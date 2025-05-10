@@ -9,6 +9,12 @@ fn fetch_resource_from_kv(key: &str) -> String {
     kv_result.take_body().into_string()
 }
 
+fn fetch_image_resource_from_kv(key: &str) -> Vec<u8> {
+    let store = KVStore::open(RESOURCE_KV_STORE_NAME).unwrap();
+    let mut kv_result = store.unwrap().lookup(key).unwrap();
+    kv_result.take_body().into_bytes()
+}
+
 #[fastly::main]
 fn main(req: Request) -> Result<Response, Error> {
     // Log service version
@@ -108,7 +114,7 @@ fn main(req: Request) -> Result<Response, Error> {
         "/images/edge-post-2_certificate.png" => {
             Ok(Response::from_status(StatusCode::OK)
                 .with_content_type(mime::IMAGE_PNG)
-                .with_body(fetch_resource_from_kv("images/edge-post-2_certificate.png")))
+                .with_body(fetch_image_resource_from_kv("images/edge-post-2_certificate.png")))
         },
         "/posts/adblocker/" => {
             Ok(Response::from_status(StatusCode::OK)
@@ -118,7 +124,7 @@ fn main(req: Request) -> Result<Response, Error> {
         "/images/honeycomb.png" => {
             Ok(Response::from_status(StatusCode::OK)
                 .with_content_type(mime::IMAGE_PNG)
-                .with_body(fetch_resource_from_kv("public/images/honeycomb.png")))
+                .with_body(fetch_image_resource_from_kv("public/images/honeycomb.png")))
         },
         // Catch all other requests and return a 404.
         _ =>  {
