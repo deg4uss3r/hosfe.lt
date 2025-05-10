@@ -83,11 +83,23 @@ fn main(req: Request) -> Result<Response, Error> {
                 .with_content_type(mime::TEXT_CSS_UTF_8)
                 .with_body(fetch_resource_from_kv("style.min.2faed4cf7533c5236bf011e885da2e0c2670dea54d80f6b5ff1f370613f0983a.css")))
         },
+        "/css/style.min.adaa279d6b6bf2a14dfd5446990eddb4b4ce63fd3f8084db63f9616183c6fad0.css" => {
+            Ok(Response::from_status(StatusCode::OK)
+                .with_header(header::ACCESS_CONTROL_ALLOW_ORIGIN, "https://www.hosfe.lt")
+                .with_content_type(mime::TEXT_CSS_UTF_8)
+                .with_body(fetch_resource_from_kv("style.min.adaa279d6b6bf2a14dfd5446990eddb4b4ce63fd3f8084db63f9616183c6fad0.css")))
+        },
         "/js/bundle.min.038214de9d568246fadcfeb06c69349925de3209f332ec123861b6aa031d63c6.js" => {
             Ok(Response::from_status(StatusCode::OK)
                 .with_header(header::ACCESS_CONTROL_ALLOW_ORIGIN, "https://www.hosfe.lt")
                 .with_content_type(mime::APPLICATION_JAVASCRIPT_UTF_8)
                 .with_body(fetch_resource_from_kv("bundle.min.038214de9d568246fadcfeb06c69349925de3209f332ec123861b6aa031d63c6.js")))
+        },
+        "/js/bundle.min.c7c384e4d29d192bbac6811ae4660bb01767194a5bea56baca77e8260f93ea16.js" => {
+            Ok(Response::from_status(StatusCode::OK)
+                .with_header(header::ACCESS_CONTROL_ALLOW_ORIGIN, "https://www.hosfe.lt")
+                .with_content_type(mime::APPLICATION_JAVASCRIPT_UTF_8)
+                .with_body(fetch_resource_from_kv("bundle.min.c7c384e4d29d192bbac6811ae4660bb01767194a5bea56baca77e8260f93ea16.js")))
         },
         "/js/link-share.min.24409a4f6e5537d70ffc55ec8f9192208d718678cb8638585342423020b37f39.js" => {
             Ok(Response::from_status(StatusCode::OK)

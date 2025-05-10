@@ -7,7 +7,7 @@ theme = "hermit-v2"
 pygmentsCodefences  = true
 
 
-copyright = "2023"
+copyright = "2025"
 enableEmoji = true
 
 # turn off tags

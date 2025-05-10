@@ -1,36 +1,27 @@
 <!DOCTYPE html>
 <html lang="en-us">
-<head>
-
-  
-
-<meta charset="UTF-8">
+<head><meta charset="UTF-8">
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta http-equiv="X-UA-Compatible" content="ie=edge">
-<meta name="robots" content="index, follow">
-<meta name="revisit-after" content="15 days">
-<link rel="author" href="/humans.txt">
-<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<meta http-equiv="X-UA-Compatible" content="ie=edge"><meta name="robots" content="index, follow"><meta name="author" content="Ricky Hosfelt">
+<meta name="description" content="My personal website for random technology and fun.">
+<link rel="author" type="text/plain" href="/humans.txt">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
 <link rel="manifest" href="/site.webmanifest">
 <meta name="msapplication-TileImage" content="/mstile-144x144.png">
-<link rel="shortcut icon" href="/favicon.ico">
 <meta name="theme-color" content="#494f5c">
 <meta name="msapplication-TileColor" content="#494f5c">
-<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#494f5c"><meta name="author" content="Ricky Hosfelt"><meta name="description" content="My personal website for random technology and fun.">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#494f5c">
 
   <meta itemprop="name" content="It&#39;s 2024 and This Blog is Now On The Edge">
-  <meta itemprop="description" content="I’m Six Feet From The Edge and I’m Thinking… Well, unlike that Classic Creed Song One Last Breath that was on the radio when I was a kid I’m actually on the edge! However, not in the way the song was intended, definitely in a technical sense.
-I am taking advantage of learning at my new job by utilizing Fastly’s Edge Compute service and deploying this blog from their edge network making this site 100% delivered from a WASM pre-compiled binary.">
+  <meta itemprop="description" content="I’m Six Feet From The Edge and I’m Thinking… Well, unlike that Classic Creed Song One Last Breath that was on the radio when I was a kid I’m actually on the edge! However, not in the way the song was intended, definitely in a technical sense.">
   <meta itemprop="datePublished" content="2024-01-05T09:18:47-05:00">
   <meta itemprop="dateModified" content="2024-01-05T09:18:47-05:00">
   <meta itemprop="wordCount" content="1733"><meta property="og:url" content="https://hosfe.lt/posts/edge/">
   <meta property="og:site_name" content="Ricky Hosfelt">
   <meta property="og:title" content="It&#39;s 2024 and This Blog is Now On The Edge">
-  <meta property="og:description" content="I’m Six Feet From The Edge and I’m Thinking… Well, unlike that Classic Creed Song One Last Breath that was on the radio when I was a kid I’m actually on the edge! However, not in the way the song was intended, definitely in a technical sense.
-I am taking advantage of learning at my new job by utilizing Fastly’s Edge Compute service and deploying this blog from their edge network making this site 100% delivered from a WASM pre-compiled binary.">
+  <meta property="og:description" content="I’m Six Feet From The Edge and I’m Thinking… Well, unlike that Classic Creed Song One Last Breath that was on the radio when I was a kid I’m actually on the edge! However, not in the way the song was intended, definitely in a technical sense.">
   <meta property="og:locale" content="en_us">
   <meta property="og:type" content="article">
     <meta property="article:section" content="posts">
@@ -39,13 +30,45 @@ I am taking advantage of learning at my new job by utilizing Fastly’s Edge Com
 
   <meta name="twitter:card" content="summary">
   <meta name="twitter:title" content="It&#39;s 2024 and This Blog is Now On The Edge">
-  <meta name="twitter:description" content="I’m Six Feet From The Edge and I’m Thinking… Well, unlike that Classic Creed Song One Last Breath that was on the radio when I was a kid I’m actually on the edge! However, not in the way the song was intended, definitely in a technical sense.
-I am taking advantage of learning at my new job by utilizing Fastly’s Edge Compute service and deploying this blog from their edge network making this site 100% delivered from a WASM pre-compiled binary.">
-<title>It&#39;s 2024 and This Blog is Now On The Edge</title>
-<link rel="stylesheet dns-prefetch preconnect preload prefetch" as="style" href="https://hosfe.lt/css/style.min.dbbe08cb3b07bbce02de1a13a57d4221bb75487e75b0d1a5196a5353f7135921.css" integrity="sha256-274IyzsHu84C3hoTpX1CIbt1SH51sNGlGWpTU/cTWSE=" crossorigin="anonymous">
+  <meta name="twitter:description" content="I’m Six Feet From The Edge and I’m Thinking… Well, unlike that Classic Creed Song One Last Breath that was on the radio when I was a kid I’m actually on the edge! However, not in the way the song was intended, definitely in a technical sense.">
+
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "headline": "It's 2024 and This Blog is Now On The Edge",
+    "name": "It\u0027s 2024 and This Blog is Now On The Edge",
+    "description": "I\u0026rsquo;m Six Feet From The Edge and I\u0026rsquo;m Thinking\u0026hellip; Well, unlike that Classic Creed Song One Last Breath that was on the radio when I was a kid I\u0026rsquo;m actually on the edge! However, not in the way the song was intended, definitely in a technical sense.\n",
+    "keywords": ["blog", "Fastly", "setup", "tech", "dns", "http", "wasm", "rust"],
+    "articleBody": "I’m Six Feet From The Edge and I’m Thinking… Well, unlike that Classic Creed Song One Last Breath that was on the radio when I was a kid I’m actually on the edge! However, not in the way the song was intended, definitely in a technical sense.\nI am taking advantage of learning at my new job by utilizing Fastly’s Edge Compute service and deploying this blog from their edge network making this site 100% delivered from a WASM pre-compiled binary. In this post I’ll be explaining how I did it along with some lessons I learned along the way.\nWhy I Put The Blog On The Edge Previously, for about 10 years I have been using the same Digital Ocean Droplet as a Virtual Private Server (VPS) serving my site. I have no complaints and it has only been about $7/month to have a website that I can do almost anything with! However, it’s gotten pretty out-of-date on the backend and I did not have a real good way to fully automate a deployment without doing (in my opinion) a lot of work. Plus, a new friend saw my certificates were expired again and pushed me to start digging more into better ways to manage those (thanks Colton!).\nBut What Advantage Does The Edge Have? Many people will be able to describe this better than me, Kats for example here, but for me the main advantage is freeing up my VPS for updating, more experiments, learning a new technology, and hosting a faster blog around the world.\nIn Your Own Words…What Is The Edge? The Edge is essentially a CDN but instead of content sitting in cache around the world it is computed on the fly when requested at the site that’s closest. Both a CDN and the Edge offer faster websites and I wanted to move closer to one repository and deploy method for the site. That and since my site is so simple I opted for compute instead of a traditional CDN.\nFinally I could take advantage of things like Certainly and never have to worry about updating my TLS certificates again, something that definitely happened to me at least twice a year while I was trying to get certbot to play nice with cron jobs (not a knock against it, Let’s Encrypt is an amazing resource and pretty much the only reason I’ve had a website for so long).\nHow To Get Started There’s essentially two paths you have to work on in parallel the raw code for the blog and the setting up of the networking to point to the edge network to serve said code.\nSome Warnings First I am definitely not done with the blog that’s for sure! As well as I am very certain there are better ways to do things but I wanted to give a little insight into how I learned and pieced together the information to get this working. If you have any suggestion throw in an issue for me!\nInfo I am a Fastly employee (and very new). So anything in the blog does not speak for Fastly itself but my own personal experience using the products they provide. Finally, this blog and post (and my life) will be centered around Rust. There’s plenty of resources for other languages (like JavaScript and Go, but I know very little about those).\nThe Blog’s Code The main focus of this section will be my main.rs Rust module (on GitHub). The source HTML is also in there but that is less interesting and I will briefly cover that later.\nThe main content is very simple just a large match statement based off of the incoming request’s path and then serving that in a response through pre-compiled HTML. essentially this boils down to very few lines of code:\nmatch req.get_path() { \"/\" =\u003e include_str!(\"../index.html\"), _ =\u003e include_str!(\"../404.html\"), } Yes, astute readers will realize that every new page will need a new line to that match statement; however, it’s a small price to pay for this being incredibly simple. I could setup some glob matches if I hosted the pages on an external service (e.g. S3, Droplet, etc.). That’s something I’d like to explore on a future date but for now this is fast, convenient, and fits nicely into a simple enough workflow for a very casual website updater 😅.\nA quick note on the include_str!() macro. If you’re not immediately familiar this is including the input file in the compiled binary. So while sacrificing binary size by including the text there’s no file system lookup or network hit required to serve each request. It also has the advantage that if that file does not exist the binary will not compile so I cannot serve you a file that does not exist (but I can leave out files that do exist).\nOkay, But How Do You Get Started? So that is all simple enough but getting started was a little bit confusing for me (I could not find a specific set of cohesive steps to get started) so I’ll walk through how I did it. Previous caveats apply here, this is information I cobbled together and not the best way but a way that works for me.\nThroughout this guide I’ll be using Fastly as mentioned previously.\nFirst, I created my Fastly account and set it up in the following way to create an edge compute service.\nNext, is to create a compute service. Do not worry about a domain or host for now you can set it to anything you want and change it later. We will use the test generated link and setup the networking later. Make sure to save your service_id as it will be necessary to push an update to that newly created service.\nTo use the Fastly CLI (next step) you’ll need a new token with permissions to do so. In the Fastly Management domain go to your Profile (upper right) \u003e Account \u003e API Tokens (lower left) and generate an API token with Global API Access both the first option (Global) for full control and Global Read (global:read is enable by default but write is not).\nWARNING make sure you save this token off as soon as you navigate away from this screen you will lose access to display the token again for security reasons. WARNING make sure to keep this safe it’s a secret. Just like any secret key, it could cost you money if you leak it. I suggest immediately storing it in a password manager like 1Password so you can access it safely and from the CLI (I’ll show you how to do this as well). Finally, for security I do recommend letting this expire and generating a new one roughly every 6 months. After that I installed the Fastly CLI (or you can do everything from the web if you prefer but I like using CLIs so I do when I can). For me that was as simple as following the brew install fastly/tap/fastly command.\nNext up we’ll test out a working CLI interface. I use 1Password’s CLI to help insert secrets without leaking them (read the install instructions here: 1Password CLI); however, you can do what you are most comfortable with (both security and tool-wise). The command I would recommend running first is:\n~ fastly whoami --token $(op item get \"$YOUR_FASTLY_ITEM_NAME\" --fields $YOUR_API_TOKEN_FIELD_NAME) If you get an output with your name and email you are good to go! Otherwise it would appear the account token you’ve generated isn’t working or you have a previous configuration somewhere that is messing with it. Reach out to the Fastly Developer Docs or the Contact the community for additional help.\nOnce you have a successful result from whoami you’re ready to push to your service! I would recommend following the Rust template repository by forking it and pushing a single simple page (e.g. one match arm with the catchall as well) with anything you want. Do so by calling the following inside the template repo:\n~ fastly compute publish --token $YOUR_TOKEN --service-id $YOUR_SERVICE_ID Once that deploys you can check it via the Management portal, click on Compute \u003e Your Service \u003e Version Number \u003e Then you should see “Test Domain” next to your domain.\nAs you get more complex or if you want to test the binary locally you can do so very easily just:\n~ fastly compute serve 💡 That will create the binary and host it locally to 127.0.0.1:7676 There’s quite a few starter kits (including in different languages) on the Fastly Organization take a look through I just picked the one I found the simplest to get started!\nFastly’s Template Structure Explained If you fork one of Fastly’s template repositories there’s some files in there that probably need a bit of explaining. I’ll quickly go over those.\nrust-toolchain.toml - You might be already familiar with this but it’s essentially controlling what version of Rust and what compile targets you need. This one helps compile for WASM which we need for deployment. From here you can add more options but I just left it as default stable toolchain.\nfastly.toml - This is the controlling file for the options on your Compute service. You’ll want to change the author, description, name, and add in the field service_id (I originally thought this was a secret but common practice allows for this in the toml). Adding in service_id now means it will be easier to get the GitHub action working (coming in part 2) as well as you can remove the --service_id option from all future command line arguments.\nCargo.toml - I will assume you know the basics here but one thing you’ll definitely want to change if you fork is the name (of the package), author, and I also upped the edition from 2018 to 2021 with no ill effects. I would recommend keeping publish to false.\nREADME - I definitely forgot to change this at first, so learn from my mistakes!\n./.github/CODEOWNERS - This is for the Fastly organization and template, change and/or remove this file it won’t work anyways!\nTo Be Continued… That is pretty much all you need to really get started with the edge using a test domain. In the next post (since this one has gotten a little longer than I anticipated) I’ll explain my DNS and deployment setup. I hope this was helpful!\n",
+    "wordCount" : "1733",
+    "inLanguage": "en",
+    "datePublished": "2024-01-05T09:18:47-05:00",
+    "dateModified": "2024-01-05T09:18:47-05:00",
+    "author":{
+        "@type": "Person",
+        "name": "Ricky Hosfelt",
+        "url": "https://hosfe.lt/about/"
+        },
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": "https://hosfe.lt/posts/edge/"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "Ricky Hosfelt",
+      "description": "My personal website for random technology and fun.",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://hosfe.lt/favicon.ico"
+      }
+    }
+}
+</script><title>It&#39;s 2024 and This Blog is Now On The Edge</title>
+<link rel="stylesheet dns-prefetch preconnect preload prefetch" as="style" media="screen" href="https://hosfe.lt/css/style.min.adaa279d6b6bf2a14dfd5446990eddb4b4ce63fd3f8084db63f9616183c6fad0.css" integrity="sha256-raonnWtr8qFN/VRGmQ7dtLTOY/0/gITbY/lhYYPG+tA=" crossorigin="anonymous">
 	</head>
 <body id="page">
-	<header id="site-header" class="animated slideInUp">
+	<header id="site-header">
 		<div class="hdr-wrapper section-inner">
 			<div class="hdr-left">
 				<div class="site-branding">
@@ -54,7 +77,48 @@ I am taking advantage of learning at my new job by utilizing Fastly’s Edge Com
 				<nav class="site-nav hide-in-mobile"><a href="https://hosfe.lt/posts/">Posts</a><a href="https://hosfe.lt/about/">About</a><a href="https://hosfe.lt/resume/">Resume</a></nav>
 			</div>
 			<div class="hdr-right hdr-icons">
-				<button id="toc-btn" class="hdr-btn desktop-only-ib" title="Table of Contents"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-list"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3" y2="6"></line><line x1="3" y1="12" x2="3" y2="12"></line><line x1="3" y1="18" x2="3" y2="18"></line></svg></button><span class="hdr-social hide-in-mobile"><a href="https://fosstodon.org/@degausser" target="_blank" rel="noopener me" title="Mastodon"><svg xmlns="http://www.w3.org/2000/svg" class="feather" width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m 21.474,13.998 c -0.296,1.526 -2.655,3.194 -5.365,3.519 -1.413,0.168 -2.804,0.323 -4.287,0.255 -2.426,-0.111 -4.34,-0.579 -4.34,-0.579 0,0.236 0.015,0.461 0.044,0.672 0.316,2.394 2.373,2.537 4.323,2.604 1.968,0.067 3.721,-0.486 3.721,-0.486 l 0.081,1.779 c 0,0 -1.377,0.739 -3.829,0.875 -1.352,0.075 -3.031,-0.034 -4.987,-0.551 C 2.594,20.963 1.865,16.442 1.752,11.855 1.719,10.493 1.741,9.209 1.741,8.134 1.741,3.443 4.814,2.069 4.814,2.069 6.363,1.356 9.022,1.056 11.787,1.035 h 0.067 c 2.764,0.022 5.426,0.322 6.975,1.033 0,0 3.073,1.375 3.073,6.066 0,0 0.039,3.461 -0.428,5.864"/><path d="M 6.464,13.231 V 7.973 c 0,-1.002 0.549,-2.613 2.613,-2.613 2.064,0 2.741,1.793 2.741,3.484 0,1.692 0,2.23 0,2.23"/><path d="M 17.173,13.231 V 7.973 c 0,-1.002 -0.549,-2.613 -2.613,-2.613 -2.064,0 -2.741,1.793 -2.741,3.484 0,1.692 -0,2.23 -0,2.23"/></svg></a><a href="https://github.com/deg4uss3r" target="_blank" rel="noopener me" title="Github"><svg xmlns="http://www.w3.org/2000/svg" class="feather" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg></a><a href="https://linkedin.com/in/ricky-hosfelt" target="_blank" rel="noopener me" title="Linkedin"><svg xmlns="http://www.w3.org/2000/svg" class="feather" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg></a><a href="https://discord.com/users/560116126592401431" target="_blank" rel="noopener me" title="Discord"><svg xmlns="http://www.w3.org/2000/svg" class="feather" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M8.82889 11.203C7.86239 11.203 7.09937 12.0508 7.09937 13.0852C7.09937 14.1195 7.87935 14.9673 8.82889 14.9673C9.79538 14.9673 10.5584 14.1195 10.5584 13.0852C10.5754 12.0508 9.79538 11.203 8.82889 11.203ZM15.0178 11.203C14.0514 11.203 13.2883 12.0508 13.2883 13.0852C13.2883 14.1195 14.0683 14.9673 15.0178 14.9673C15.9843 14.9673 16.7474 14.1195 16.7474 13.0852C16.7474 12.0508 15.9843 11.203 15.0178 11.203Z" fill="currentColor"/><path d="M14.8477 18.3649C14.8874 18.4483 14.9381 18.5296 15.0005 18.6075C15.3663 19.0644 15.7387 19.5135 15.8832 19.687C16.1242 19.9764 16.4855 20.1329 16.8553 20.117C20.6839 19.9522 22.4053 17.6063 22.7126 17.1342C22.8526 16.919 22.9029 16.6887 22.9023 16.4867C22.8862 11.0873 20.6126 6.69288 20.3618 6.22299C20.2686 6.04849 20.1448 5.9213 20.0223 5.83024C17.6324 4.05442 15.3398 3.89258 14.7987 3.87945C14.4248 3.87037 14.1018 4.039 13.8908 4.28019C13.7833 4.40298 13.7069 4.53817 13.659 4.67843C12.4808 4.5498 11.3488 4.5684 10.3271 4.681C10.2848 4.54257 10.2137 4.40813 10.1111 4.28494C9.90289 4.03513 9.58304 3.87239 9.22517 3.87894C8.72884 3.88801 6.40341 4.02781 3.9777 5.83024C3.85516 5.9213 3.73139 6.04849 3.63825 6.22299C3.38742 6.69289 1.11365 11.0876 1.09774 16.4873C1.09715 16.6871 1.14634 16.9155 1.28416 17.1296C1.58866 17.6027 3.29601 19.9515 7.12649 20.1169C7.50079 20.1331 7.86486 19.9726 8.10512 19.6794C8.2521 19.5 8.63516 19.0311 9.00416 18.5683C9.06865 18.4874 9.12057 18.4028 9.16075 18.316C9.32759 18.3546 9.49869 18.391 9.67405 18.4248L9.67405 18.4248L9.68004 18.426C11.0465 18.681 12.6626 18.7747 14.4312 18.4443C14.5698 18.4206 14.7086 18.3942 14.8477 18.3649Z" stroke="currentColor" stroke-width="2"/></svg></a></span><button id="share-btn" class="hdr-btn" title="Share"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-share-2"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg></button>
+				<button id="toc-btn" class="hdr-btn desktop-only-ib" title=""><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-list">
+      <line x1="8" y1="6" x2="21" y2="6"></line>
+      <line x1="8" y1="12" x2="21" y2="12"></line>
+      <line x1="8" y1="18" x2="21" y2="18"></line>
+      <line x1="3" y1="6" x2="3" y2="6"></line>
+      <line x1="3" y1="12" x2="3" y2="12"></line>
+      <line x1="3" y1="18" x2="3" y2="18"></line>
+   </svg></button><span class="hdr-links hide-in-mobile"><a href="https://fosstodon.org/@degausser" target="_blank" rel="noopener me" title="Mastodon"><svg xmlns="http://www.w3.org/2000/svg" class="feather" width="24" height="24" fill="none" stroke="currentColor"
+   viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+   <path
+      d="m 21.474,13.998 c -0.296,1.526 -2.655,3.194 -5.365,3.519 -1.413,0.168 -2.804,0.323 -4.287,0.255 -2.426,-0.111 -4.34,-0.579 -4.34,-0.579 0,0.236 0.015,0.461 0.044,0.672 0.316,2.394 2.373,2.537 4.323,2.604 1.968,0.067 3.721,-0.486 3.721,-0.486 l 0.081,1.779 c 0,0 -1.377,0.739 -3.829,0.875 -1.352,0.075 -3.031,-0.034 -4.987,-0.551 C 2.594,20.963 1.865,16.442 1.752,11.855 1.719,10.493 1.741,9.209 1.741,8.134 1.741,3.443 4.814,2.069 4.814,2.069 6.363,1.356 9.022,1.056 11.787,1.035 h 0.067 c 2.764,0.022 5.426,0.322 6.975,1.033 0,0 3.073,1.375 3.073,6.066 0,0 0.039,3.461 -0.428,5.864" />
+   <path
+      d="M 6.464,13.231 V 7.973 c 0,-1.002 0.549,-2.613 2.613,-2.613 2.064,0 2.741,1.793 2.741,3.484 0,1.692 0,2.23 0,2.23" />
+   <path
+      d="M 17.173,13.231 V 7.973 c 0,-1.002 -0.549,-2.613 -2.613,-2.613 -2.064,0 -2.741,1.793 -2.741,3.484 0,1.692 -0,2.23 -0,2.23" />
+</svg></a><a href="https://github.com/deg4uss3r" target="_blank" rel="noopener me" title="Github"><svg xmlns="http://www.w3.org/2000/svg" class="feather" width="24" height="24" viewBox="0 0 24 24" fill="none"
+   stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+   <path
+      d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22">
+   </path>
+</svg></a><a href="https://linkedin.com/in/ricky-hosfelt" target="_blank" rel="noopener me" title="Linkedin"><svg xmlns="http://www.w3.org/2000/svg" class="feather" width="24" height="24" viewBox="0 0 24 24" fill="none"
+   stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+   <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path>
+   <rect x="2" y="9" width="4" height="12"></rect>
+   <circle cx="4" cy="4" r="2"></circle>
+</svg></a><a href="https://discord.com/users/560116126592401431" target="_blank" rel="noopener me" title="Discord"><svg xmlns="http://www.w3.org/2000/svg" class="feather" width="24" height="24" viewBox="0 0 24 24" fill="none"
+   stroke-linecap="round" stroke-linejoin="round">
+   <path
+      d="M8.82889 11.203C7.86239 11.203 7.09937 12.0508 7.09937 13.0852C7.09937 14.1195 7.87935 14.9673 8.82889 14.9673C9.79538 14.9673 10.5584 14.1195 10.5584 13.0852C10.5754 12.0508 9.79538 11.203 8.82889 11.203ZM15.0178 11.203C14.0514 11.203 13.2883 12.0508 13.2883 13.0852C13.2883 14.1195 14.0683 14.9673 15.0178 14.9673C15.9843 14.9673 16.7474 14.1195 16.7474 13.0852C16.7474 12.0508 15.9843 11.203 15.0178 11.203Z"
+      fill="currentColor" />
+   <path
+      d="M14.8477 18.3649C14.8874 18.4483 14.9381 18.5296 15.0005 18.6075C15.3663 19.0644 15.7387 19.5135 15.8832 19.687C16.1242 19.9764 16.4855 20.1329 16.8553 20.117C20.6839 19.9522 22.4053 17.6063 22.7126 17.1342C22.8526 16.919 22.9029 16.6887 22.9023 16.4867C22.8862 11.0873 20.6126 6.69288 20.3618 6.22299C20.2686 6.04849 20.1448 5.9213 20.0223 5.83024C17.6324 4.05442 15.3398 3.89258 14.7987 3.87945C14.4248 3.87037 14.1018 4.039 13.8908 4.28019C13.7833 4.40298 13.7069 4.53817 13.659 4.67843C12.4808 4.5498 11.3488 4.5684 10.3271 4.681C10.2848 4.54257 10.2137 4.40813 10.1111 4.28494C9.90289 4.03513 9.58304 3.87239 9.22517 3.87894C8.72884 3.88801 6.40341 4.02781 3.9777 5.83024C3.85516 5.9213 3.73139 6.04849 3.63825 6.22299C3.38742 6.69289 1.11365 11.0876 1.09774 16.4873C1.09715 16.6871 1.14634 16.9155 1.28416 17.1296C1.58866 17.6027 3.29601 19.9515 7.12649 20.1169C7.50079 20.1331 7.86486 19.9726 8.10512 19.6794C8.2521 19.5 8.63516 19.0311 9.00416 18.5683C9.06865 18.4874 9.12057 18.4028 9.16075 18.316C9.32759 18.3546 9.49869 18.391 9.67405 18.4248L9.67405 18.4248L9.68004 18.426C11.0465 18.681 12.6626 18.7747 14.4312 18.4443C14.5698 18.4206 14.7086 18.3942 14.8477 18.3649Z"
+      stroke="currentColor" stroke-width="2" />
+</svg></a></span><button id="share-btn" class="hdr-btn" title=""><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-share-2">
+      <circle cx="18" cy="5" r="3"></circle>
+      <circle cx="6" cy="12" r="3"></circle>
+      <circle cx="18" cy="19" r="3"></circle>
+      <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+      <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+   </svg></button>
  
 <div id="share-links" class="animated fast">
     
@@ -63,22 +127,46 @@ I am taking advantage of learning at my new job by utilizing Fastly’s Edge Com
     
     <ul>
         <li>
-            <a href="https://twitter.com/intent/tweet?hashtags=hermit2&amp;url=https%3a%2f%2fhosfe.lt%2fposts%2fedge%2f&amp;text=It%27s%202024%20and%20This%20Blog%20is%20Now%20On%20The%20Edge" target="_blank" rel="noopener" aria-label="Share on X"><svg xmlns="http://www.w3.org/2000/svg" class="feather" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path class="st0" d="m21.3 21.1 -11.4 -18.2h-7.2l11.4 18.2zm-18.6 0 7.2 -6.6m4.2 -5 7.2 -6.6"/></svg></a>
+            <a href="https://twitter.com/intent/tweet?hashtags=hermit2&amp;url=https%3a%2f%2fhosfe.lt%2fposts%2fedge%2f&amp;text=It%27s%202024%20and%20This%20Blog%20is%20Now%20On%20The%20Edge" target="_blank" rel="noopener" aria-label="Share on X"><svg xmlns="http://www.w3.org/2000/svg" class="feather" width="24" height="24" viewBox="0 0 24 24" fill="none"
+   stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+   <path class="st0" d="m21.3 21.1 -11.4 -18.2h-7.2l11.4 18.2zm-18.6 0 7.2 -6.6m4.2 -5 7.2 -6.6" />
+</svg></a>
         </li>
         <li>
-            <a href="https://facebook.com/sharer/sharer.php?u=https%3a%2f%2fhosfe.lt%2fposts%2fedge%2f" target="_blank" rel="noopener" aria-label="Share on Facebook"><svg xmlns="http://www.w3.org/2000/svg" class="feather" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg></a>
+            <a href="https://facebook.com/sharer/sharer.php?u=https%3a%2f%2fhosfe.lt%2fposts%2fedge%2f" target="_blank" rel="noopener" aria-label="Share on Facebook"><svg xmlns="http://www.w3.org/2000/svg" class="feather" width="24" height="24" viewBox="0 0 24 24" fill="none"
+   stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+   <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
+</svg></a>
         </li>
         <li>
-            <a href="mailto:?subject=It%27s%202024%20and%20This%20Blog%20is%20Now%20On%20The%20Edge&amp;body=https%3a%2f%2fhosfe.lt%2fposts%2fedge%2f" target="_self" rel="noopener" aria-label="Share on Email"><svg xmlns="http://www.w3.org/2000/svg" class="feather" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg></a>
+            <a href="mailto:?subject=It%27s%202024%20and%20This%20Blog%20is%20Now%20On%20The%20Edge&amp;body=https%3a%2f%2fhosfe.lt%2fposts%2fedge%2f" target="_self" rel="noopener" aria-label="Share on Email"><svg xmlns="http://www.w3.org/2000/svg" class="feather" width="24" height="24" viewBox="0 0 24 24" fill="none"
+   stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+   <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+   <polyline points="22,6 12,13 2,6"></polyline>
+</svg></a>
         </li>
         <li>
-            <a href="https://www.linkedin.com/shareArticle?mini=true&amp;url=https%3a%2f%2fhosfe.lt%2fposts%2fedge%2f&amp;source=https%3a%2f%2fhosfe.lt%2f&amp;title=It%27s%202024%20and%20This%20Blog%20is%20Now%20On%20The%20Edge&amp;summary=It%27s%202024%20and%20This%20Blog%20is%20Now%20On%20The%20Edge%2c%20by%20Ricky%20Hosfelt%0a%0a%3cnil%3e%0a" target="_blank" rel="noopener" aria-label="Share on LinkedIn"><svg xmlns="http://www.w3.org/2000/svg" class="feather" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg></a>
+            <a href="https://www.linkedin.com/shareArticle?mini=true&amp;url=https%3a%2f%2fhosfe.lt%2fposts%2fedge%2f&amp;source=https%3a%2f%2fhosfe.lt%2f&amp;title=It%27s%202024%20and%20This%20Blog%20is%20Now%20On%20The%20Edge&amp;summary=It%27s%202024%20and%20This%20Blog%20is%20Now%20On%20The%20Edge%2c%20by%20Ricky%20Hosfelt%0a%0a%3cnil%3e%0a" target="_blank" rel="noopener" aria-label="Share on LinkedIn"><svg xmlns="http://www.w3.org/2000/svg" class="feather" width="24" height="24" viewBox="0 0 24 24" fill="none"
+   stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+   <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path>
+   <rect x="2" y="9" width="4" height="12"></rect>
+   <circle cx="4" cy="4" r="2"></circle>
+</svg></a>
         </li>
         <li>
-            <a href="#" onclick="linkShare(&#34;It&#39;s 2024 and This Blog is Now On The Edge&#34;,&#34;https://hosfe.lt/posts/edge/&#34;,&#34;It&#39;s 2024 and This Blog is Now On The Edge, by Ricky Hosfelt\n\n\u003cnil\u003e\n&#34;); return false;" target="_self" rel="noopener" aria-label="Copy Link"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-copy"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg></a>
+            <a href="#" onclick="linkShare(&#34;It&#39;s 2024 and This Blog is Now On The Edge&#34;,&#34;https://hosfe.lt/posts/edge/&#34;,&#34;It&#39;s 2024 and This Blog is Now On The Edge, by Ricky Hosfelt\n\n\u003cnil\u003e\n&#34;); return false;" target="_self" rel="noopener" aria-label="Copy Link"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-copy">
+      <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+      <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+   </svg></a>
         </li>
     </ul>
-</div><button id="menu-btn" class="hdr-btn" title="Menu"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-menu"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg></button>
+</div><button id="menu-btn" class="hdr-btn" title=""><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+   </svg></button>
 			</div>
 		</div>
 	</header>
@@ -93,52 +181,106 @@ I am taking advantage of learning at my new job by utilizing Fastly’s Edge Com
 
 	<main class="site-main section-inner animated fadeIn faster"><article class="thin">
 			<header class="post-header">
-				<div class="post-meta"><span>Jan 5, 2024</span></div>
+				<div class="post-date"><span>Jan 5, 2024</span></div>
 				<h1>It&#39;s 2024 and This Blog is Now On The Edge</h1>
 			</header>
-			<div class="post-info"><p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-feather"><path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z"></path><line x1="16" y1="8" x2="2" y2="22"></line><line x1="17.5" y1="15" x2="9" y2="15"></line></svg><a href="/about/" target="_blank">Ricky Hosfelt</a></p>
-<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-tag meta-icon"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7" y2="7"></line></svg><span class="tag"><a href="https://hosfe.lt/tags/blog">blog</a></span><span class="tag"><a href="https://hosfe.lt/tags/fastly">Fastly</a></span><span class="tag"><a href="https://hosfe.lt/tags/setup">setup</a></span><span class="tag"><a href="https://hosfe.lt/tags/tech">tech</a></span><span class="tag"><a href="https://hosfe.lt/tags/dns">dns</a></span><span class="tag"><a href="https://hosfe.lt/tags/http">http</a></span><span class="tag"><a href="https://hosfe.lt/tags/wasm">wasm</a></span><span class="tag"><a href="https://hosfe.lt/tags/rust">rust</a></span></p>
-<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>1733 Words
-    –
-    
-    
-    
-    7 Minutes, 52 Seconds</p>
-<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-calendar"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>2024-01-05 09:18 -0500</p></div>
+			<div class="post-description"><p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+   stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-feather">
+   <path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z"></path>
+   <line x1="16" y1="8" x2="2" y2="22"></line>
+   <line x1="17.5" y1="15" x2="9" y2="15"></line>
+</svg><a href="https://hosfe.lt/about/" target="_blank">Ricky Hosfelt</a></p>
+<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-tag meta-icon">
+      <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path>
+      <line x1="7" y1="7" x2="7" y2="7"></line>
+   </svg><span class="tag"><a href="https://hosfe.lt/tags/blog">blog</a></span><span class="tag"><a href="https://hosfe.lt/tags/fastly">Fastly</a></span><span class="tag"><a href="https://hosfe.lt/tags/setup">setup</a></span><span class="tag"><a href="https://hosfe.lt/tags/tech">tech</a></span><span class="tag"><a href="https://hosfe.lt/tags/dns">dns</a></span><span class="tag"><a href="https://hosfe.lt/tags/http">http</a></span><span class="tag"><a href="https://hosfe.lt/tags/wasm">wasm</a></span><span class="tag"><a href="https://hosfe.lt/tags/rust">rust</a></span></p>
+<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text">
+      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+      <polyline points="14 2 14 8 20 8"></polyline>
+      <line x1="16" y1="13" x2="8" y2="13"></line>
+      <line x1="16" y1="17" x2="8" y2="17"></line>
+      <polyline points="10 9 9 9 8 9"></polyline>
+   </svg>1733&nbsp  –7 Minutes, 52 Seconds</p>
+<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-calendar">
+      <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+      <line x1="16" y1="2" x2="16" y2="6"></line>
+      <line x1="8" y1="2" x2="8" y2="6"></line>
+      <line x1="3" y1="10" x2="21" y2="10"></line>
+   </svg>2024-01-05 09:18 -0500
+</p></div>
 			<hr class="post-end">
 			<div class="content">
-				<h1 id="im-six-feet-from-the-edge-and-im-thinking">I&rsquo;m Six Feet From The Edge and I&rsquo;m Thinking&hellip;<a href="#im-six-feet-from-the-edge-and-im-thinking" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h1>
+				 <h1 id="im-six-feet-from-the-edge-and-im-thinking">I&rsquo;m Six Feet From The Edge and I&rsquo;m Thinking&hellip;<a href="#im-six-feet-from-the-edge-and-im-thinking" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+      stroke-linecap="round" stroke-linejoin="round">
+      <path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path>
+      <line x1="8" y1="12" x2="16" y2="12"></line>
+   </svg></a></h1>
 <p>Well, unlike that <a href="https://www.youtube.com/watch?v=qnkuBUAwfe0">Classic Creed Song</a> <em>One Last Breath</em> that was on the radio when I was a kid I&rsquo;m actually on the edge! However, not in the way the song was intended, definitely in a technical sense.</p>
 <p>I am taking advantage of learning at my new job by utilizing <a href="htttps://fastly.com">Fastly&rsquo;s</a> Edge Compute service and deploying this blog from their edge network making this site 100% delivered from a WASM pre-compiled binary. In this post I&rsquo;ll be explaining how I did it along with some lessons I learned along the way.</p>
-<h2 id="why-i-put-the-blog-on-the-edge">Why I Put The Blog On The Edge<a href="#why-i-put-the-blog-on-the-edge" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
+<h2 id="why-i-put-the-blog-on-the-edge">Why I Put The Blog On The Edge<a href="#why-i-put-the-blog-on-the-edge" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+      stroke-linecap="round" stroke-linejoin="round">
+      <path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path>
+      <line x1="8" y1="12" x2="16" y2="12"></line>
+   </svg></a></h2>
 <p>Previously, for about 10 years I have been using the same <a href="https://digitalocean.com">Digital Ocean</a> Droplet as a Virtual Private Server (VPS) serving my site. I have no complaints and it has only been about $7/month to have a website that I can do almost anything with! However, it&rsquo;s gotten pretty out-of-date on the backend and I did not have a real good way to fully automate a deployment without doing (in my opinion) a lot of work. Plus, a new friend saw my certificates were expired again and pushed me to start digging more into better ways to manage those (thanks Colton!).</p>
-<h3 id="but-what-advantage-does-the-edge-have">But What Advantage Does The Edge Have?<a href="#but-what-advantage-does-the-edge-have" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h3>
+<h3 id="but-what-advantage-does-the-edge-have">But What Advantage Does The Edge Have?<a href="#but-what-advantage-does-the-edge-have" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+      stroke-linecap="round" stroke-linejoin="round">
+      <path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path>
+      <line x1="8" y1="12" x2="16" y2="12"></line>
+   </svg></a></h3>
 <p>Many people will be able to describe this better than me, <a href="https://www.fastly.com/blog/no-origin-static-websites-at-the-edge">Kats for example here</a>, but for me the main advantage is freeing up my VPS for updating, more experiments, learning a new technology, and hosting a faster blog around the world.</p>
-<h3 id="in-your-own-wordswhat-is-the-edge">In Your Own Words&hellip;What Is The Edge?<a href="#in-your-own-wordswhat-is-the-edge" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h3>
+<h3 id="in-your-own-wordswhat-is-the-edge">In Your Own Words&hellip;What Is The Edge?<a href="#in-your-own-wordswhat-is-the-edge" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+      stroke-linecap="round" stroke-linejoin="round">
+      <path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path>
+      <line x1="8" y1="12" x2="16" y2="12"></line>
+   </svg></a></h3>
 <p>The Edge is essentially a CDN but instead of content sitting in cache around the world it is computed on the fly when requested at the site that&rsquo;s closest. Both a CDN and the Edge offer faster websites and I wanted to move closer to one repository and deploy method for the site. That and since my site is <em>so simple</em> I opted for compute instead of a traditional CDN.</p>
 <p>Finally I could take advantage of things like <a href="https://docs.fastly.com/products/certainly">Certainly</a> and never have to worry about updating my TLS certificates again, something that definitely happened to me at least twice a year while I was trying to get <code>certbot</code> to play nice with cron jobs (not a knock against it, <a href="https://letsencrypt.org/">Let&rsquo;s Encrypt</a> is an amazing resource and pretty much the only reason I&rsquo;ve had a website for so long).</p>
-<h2 id="how-to-get-started">How To Get Started<a href="#how-to-get-started" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
+<h2 id="how-to-get-started">How To Get Started<a href="#how-to-get-started" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+      stroke-linecap="round" stroke-linejoin="round">
+      <path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path>
+      <line x1="8" y1="12" x2="16" y2="12"></line>
+   </svg></a></h2>
 <p>There&rsquo;s essentially two paths you have to work on in parallel the raw code for the blog and the setting up of the networking to point to the edge network to serve said code.</p>
-<h3 id="some-warnings-first">Some Warnings First<a href="#some-warnings-first" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h3>
+<h3 id="some-warnings-first">Some Warnings First<a href="#some-warnings-first" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+      stroke-linecap="round" stroke-linejoin="round">
+      <path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path>
+      <line x1="8" y1="12" x2="16" y2="12"></line>
+   </svg></a></h3>
 <p>I am definitely not done with the blog that&rsquo;s for sure! As well as I am very certain there are better ways to do things but I wanted to give a little insight into how I learned and pieced together the information to get this working. If you have any suggestion throw in <a href="https://github.com/deg4uss3r/hosfe.lt/issues">an issue</a> for me!</p>
 
     <aside class="admonition success">
         <div class="admonition-title">
-            <div class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-check-circle"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg></div><b>Info</b>
+            <div class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-check-circle">
+      <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+      <polyline points="22 4 12 14.01 9 11.01"></polyline>
+   </svg></div><b>Info</b>
         </div>
         <div class="admonition-content">I am a Fastly employee (and very new). So anything in the blog does not speak for Fastly itself but my own personal experience using the products they provide.</div>
     </aside>
 <p>Finally, this blog and post (and my life) will be centered around Rust. There&rsquo;s plenty of resources for other languages (like <a href="https://developer.fastly.com/learning/compute/javascript/">JavaScript</a> and <a href="https://developer.fastly.com/learning/compute/go/">Go</a>, but I know very little about those).</p>
-<h3 id="the-blogs-code">The Blog&rsquo;s Code<a href="#the-blogs-code" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h3>
+<h3 id="the-blogs-code">The Blog&rsquo;s Code<a href="#the-blogs-code" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+      stroke-linecap="round" stroke-linejoin="round">
+      <path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path>
+      <line x1="8" y1="12" x2="16" y2="12"></line>
+   </svg></a></h3>
 <p>The main focus of this section will be my <code>main.rs</code> Rust module (<a href="https://github.com/deg4uss3r/hosfe.lt/src/main.rs">on GitHub</a>). The source HTML is also in there but that is less interesting and I will briefly cover that later.</p>
 <p>The main content is very simple just a large <code>match</code> statement based off of the incoming request&rsquo;s path and then serving that in a response through pre-compiled HTML. essentially this boils down to very few lines of code:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#ff79c6">match</span> req.get_path() {
-</span></span><span style="display:flex;"><span>  <span style="color:#f1fa8c">&#34;/&#34;</span> <span style="color:#ff79c6">=&gt;</span> include_str!(<span style="color:#f1fa8c">&#34;../index.html&#34;</span>),
-</span></span><span style="display:flex;"><span>  _ <span style="color:#ff79c6">=&gt;</span> include_str!(<span style="color:#f1fa8c">&#34;../404.html&#34;</span>),
+</span></span><span style="display:flex;"><span>  <span style="color:#f1fa8c">&#34;/&#34;</span> <span style="color:#ff79c6">=&gt;</span> <span style="color:#50fa7b">include_str!</span>(<span style="color:#f1fa8c">&#34;../index.html&#34;</span>),
+</span></span><span style="display:flex;"><span>  _ <span style="color:#ff79c6">=&gt;</span> <span style="color:#50fa7b">include_str!</span>(<span style="color:#f1fa8c">&#34;../404.html&#34;</span>),
 </span></span><span style="display:flex;"><span>} 
 </span></span></code></pre></div><p>Yes, astute readers will realize that every new page will need a new line to that match statement; however, it&rsquo;s a small price to pay for this being <em>incredibly simple</em>. I could setup some glob matches if I hosted the pages on an external service (e.g. S3, Droplet, etc.). That&rsquo;s something I&rsquo;d like to explore on a future date but for now this is fast, convenient, and fits nicely into a simple enough workflow for a very casual website updater 😅.</p>
 <p>A quick note on the <code>include_str!()</code> <a href="https://doc.rust-lang.org/std/macro.include_str.html">macro</a>. If you&rsquo;re not immediately familiar this is including the input file in the compiled binary. So while sacrificing binary size by including the text there&rsquo;s no file system lookup or network hit required to serve each request. It also has the advantage that if that file does not exist the binary will not compile so I cannot serve you a file that does not exist (but I can leave out files that <em>do</em> exist).</p>
-<h3 id="okay-but-how-do-you-get-started">Okay, But How Do You Get Started?<a href="#okay-but-how-do-you-get-started" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h3>
+<h3 id="okay-but-how-do-you-get-started">Okay, But How Do You Get Started?<a href="#okay-but-how-do-you-get-started" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+      stroke-linecap="round" stroke-linejoin="round">
+      <path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path>
+      <line x1="8" y1="12" x2="16" y2="12"></line>
+   </svg></a></h3>
 <p>So that is all simple enough but getting started was a little bit confusing for me (I could not find a specific set of cohesive steps to get started) so I&rsquo;ll walk through how I did it. Previous caveats apply here, this is information I cobbled together and not the <em>best</em> way but a way that works for me.</p>
 <p>Throughout this guide I&rsquo;ll be using Fastly as mentioned previously.</p>
 <p>First, I created my <a href="https://manage.fastly.com/home">Fastly account</a> and set it up in the following way to create an edge compute service.</p>
@@ -147,14 +289,24 @@ I am taking advantage of learning at my new job by utilizing Fastly’s Edge Com
 
     <aside class="admonition danger">
         <div class="admonition-title">
-            <div class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-alert-triangle"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg></div><b>WARNING</b>
+            <div class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-alert-triangle">
+      <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+      <line x1="12" y1="9" x2="12" y2="13"></line>
+      <line x1="12" y1="17" x2="12.01" y2="17"></line>
+   </svg></div><b>WARNING</b>
         </div>
         <div class="admonition-content">make <em>sure</em> you save this token off as soon as you navigate away from this screen you will lose access to display the token again for security reasons.</div>
     </aside>
 
     <aside class="admonition danger">
         <div class="admonition-title">
-            <div class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-alert-triangle"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg></div><b>WARNING</b>
+            <div class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-alert-triangle">
+      <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+      <line x1="12" y1="9" x2="12" y2="13"></line>
+      <line x1="12" y1="17" x2="12.01" y2="17"></line>
+   </svg></div><b>WARNING</b>
         </div>
         <div class="admonition-content">make sure to keep this safe it&rsquo;s a secret. Just like any secret key, it could cost you money if you leak it. I suggest immediately storing it in a password manager like <a href="https://1password.com">1Password</a> so you can access it safely and from the CLI (I&rsquo;ll show you how to do this as well). Finally, for security I do recommend letting this expire and generating a new one roughly every 6 months.</div>
     </aside>
@@ -170,26 +322,46 @@ I am taking advantage of learning at my new job by utilizing Fastly’s Edge Com
 </span></span></code></pre></div>
     <aside class="admonition tip">
         <div class="admonition-title">
-            <div class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-sun"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg></div><b>💡</b>
+            <div class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+   </svg></div><b>💡</b>
         </div>
         <div class="admonition-content">That will create the binary and host it locally to <code>127.0.0.1:7676</code></div>
     </aside>
 <p>There&rsquo;s quite a few starter kits (including in different languages) on the <a href="https://github.com/search?q=%22fastly%2Fcompute-starter-kit%22+owner%3Afastly+&amp;type=repositories">Fastly Organization</a> take a look through I just picked the one I found the simplest to get started!</p>
-<h4 id="fastlys-template-structure-explained">Fastly&rsquo;s Template Structure Explained<a href="#fastlys-template-structure-explained" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h4>
+<h4 id="fastlys-template-structure-explained">Fastly&rsquo;s Template Structure Explained<a href="#fastlys-template-structure-explained" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+      stroke-linecap="round" stroke-linejoin="round">
+      <path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path>
+      <line x1="8" y1="12" x2="16" y2="12"></line>
+   </svg></a></h4>
 <p>If you fork one of Fastly&rsquo;s template repositories there&rsquo;s some files in there that probably need a bit of explaining. I&rsquo;ll quickly go over those.</p>
 <p><code>rust-toolchain.toml</code> - You might be already familiar with this but it&rsquo;s essentially controlling what version of Rust and what compile targets you need. This one helps compile for WASM which we need for deployment. From here you can add more options but I just left it as default stable toolchain.</p>
 <p><code>fastly.toml</code> - This is the controlling file for the options on your Compute service. You&rsquo;ll want to change the author, description, name, and add in the field <code>service_id</code> (I originally thought this was a secret but common practice allows for this in the <code>toml</code>). Adding in <code>service_id</code> now means it will be easier to get the GitHub action working (coming in part 2) as well as you can remove the <code>--service_id</code> option from all future command line arguments.</p>
 <p><code>Cargo.toml</code> - I will assume you know the basics here but one thing you&rsquo;ll definitely want to change if you fork is the name (of the package), author, and I also upped the edition from <code>2018</code> to <code>2021</code> with no ill effects. I would recommend keeping <a href="https://doc.rust-lang.org/cargo/reference/manifest.html#the-publish-field">publish</a> to <code>false</code>.</p>
 <p><code>README</code> - I definitely forgot to change this at first, so learn from my mistakes!</p>
 <p><code>./.github/CODEOWNERS</code> - This is for the Fastly organization and template, change and/or remove this file it won&rsquo;t work anyways!</p>
-<h2 id="to-be-continued">To Be Continued&hellip;<a href="#to-be-continued" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
+<h2 id="to-be-continued">To Be Continued&hellip;<a href="#to-be-continued" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+      stroke-linecap="round" stroke-linejoin="round">
+      <path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path>
+      <line x1="8" y1="12" x2="16" y2="12"></line>
+   </svg></a></h2>
 <p>That is pretty much all you need to really get started with the edge using a test domain. In the next post (since this one has gotten a little longer than I anticipated) I&rsquo;ll explain my DNS and deployment setup. I hope this was helpful!</p>
 
 			</div>
+			
 
 		</article>
 		<aside id="toc">
-			<div class="toc-title">Table of Contents</div>
+			<div class="toc-title"></div>
 			<nav id="TableOfContents">
   <ul>
     <li><a href="#why-i-put-the-blog-on-the-edge">Why I Put The Blog On The Edge</a>
@@ -211,29 +383,27 @@ I am taking advantage of learning at my new job by utilizing Fastly’s Edge Com
 		</aside>
 		<div class="post-nav thin">
 			<a class="next-post" href="https://hosfe.lt/posts/edge2/">
-				<span class="post-nav-label"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-left"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>&nbsp;Newer</span><br><span>This Blog is on the Edge Part 2: The Journey Continues</span>
+				<span class="post-nav-label"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-left">
+      <line x1="19" y1="12" x2="5" y2="12"></line>
+      <polyline points="12 19 5 12 12 5"></polyline>
+   </svg>&nbsp;</span><br><span>This Blog is on the Edge Part 2: The Journey Continues</span>
 			</a>
 			<a class="prev-post" href="https://hosfe.lt/posts/story/">
-				<span class="post-nav-label">Older&nbsp;<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-right"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></span><br><span>My Path To Management</span>
+				<span class="post-nav-label">&nbsp;<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-right">
+      <line x1="5" y1="12" x2="19" y2="12"></line>
+      <polyline points="12 5 19 12 12 19"></polyline>
+   </svg></span><br><span>My Path To Management</span>
 			</a>
 		</div>
-		<div id="comments" class="thin">
-</div>
+		<div id="comments" class="thin"></div>
 	</main>
-
 <footer id="site-footer" class="section-inner thin animated fadeIn faster">
-	<p>
-		&copy; 2024 <a href="https://hosfe.lt/">Ricky Hosfelt</a>
-		&#183; MIT – All Rights Reserved
-		&#183; Made with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a>
-		&#183; Theme <a href="https://github.com/1bl4z3r/hermit-V2" target="_blank" rel="noopener">Hermit-V2</a>
-		
-		&#183; <a href="https://hosfe.lt/posts/index.xml" target="_blank" title="rss"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-rss"><path d="M4 11a9 9 0 0 1 9 9"></path><path d="M4 4a16 16 0 0 1 16 16"></path><circle cx="5" cy="19" r="1"></circle></svg></a>
-		
-	</p>
-
-</footer>
-<script async src="https://hosfe.lt/js/bundle.min.038214de9d568246fadcfeb06c69349925de3209f332ec123861b6aa031d63c6.js" integrity="sha256-A4IU3p1Wgkb63P6wbGk0mSXeMgnzMuwSOGG2qgMdY8Y=" crossorigin="anonymous"></script><script async src="https://hosfe.lt/js/link-share.min.24409a4f6e5537d70ffc55ec8f9192208d718678cb8638585342423020b37f39.js" integrity="sha256-JECaT25VN9cP/FXsj5GSII1xhnjLhjhYU0JCMCCzfzk=" crossorigin="anonymous"></script>
+<p>
+	&copy; 2025 <a href="https://hosfe.lt/">Ricky Hosfelt</a>
+	&#183; MIT – All Rights Reserved&#183; Made with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a>
+	&#183; Theme <a href="https://github.com/1bl4z3r/hermit-V2" target="_blank" rel="noopener">Hermit-V2</a></p></footer>
+<script async src="https://hosfe.lt/js/bundle.min.c7c384e4d29d192bbac6811ae4660bb01767194a5bea56baca77e8260f93ea16.js" integrity="sha256-x8OE5NKdGSu6xoEa5GYLsBdnGUpb6la6ynfoJg+T6hY=" crossorigin="anonymous"></script><script async src="https://hosfe.lt/js/link-share.min.24409a4f6e5537d70ffc55ec8f9192208d718678cb8638585342423020b37f39.js" integrity="sha256-JECaT25VN9cP/FXsj5GSII1xhnjLhjhYU0JCMCCzfzk=" crossorigin="anonymous"></script>
 </body>
-
 </html>

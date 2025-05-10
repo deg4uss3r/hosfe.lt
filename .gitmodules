@@ -2,3 +2,7 @@
 	path = static_site/hosfe.lt/themes/hermit-v2
 	url = https://github.com/1bl4z3r/hermit-V2
 	branch = main
+[submodule "src/static_site/hosfe.lt/themes/hermit-v2"]
+	path = src/static_site/hosfe.lt/themes/hermit-v2
+	url = https://github.com/1bl4z3r/hermit-V2
+	branch = main

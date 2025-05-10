@@ -1,309 +1,41 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
-	<channel>
-		<title>Posts on Ricky Hosfelt</title>
-		<link>https://hosfe.lt/posts/</link>
-		<description>Recent content in Posts on Ricky Hosfelt</description>
-		<generator>Hugo -- gohugo.io</generator>
-		<language>en-us</language>
-		<copyright>2023</copyright>
-		<lastBuildDate>Wed, 15 May 2024 00:00:00 +0000</lastBuildDate>
-		<atom:link href="https://hosfe.lt/posts/index.xml" rel="self" type="application/rss+xml" />
-		
-		<item>
-			<title>Adblocker on an Edge Network</title>
-			<link>https://hosfe.lt/posts/adblocker/</link>
-			<pubDate>Wed, 15 May 2024 00:00:00 +0000</pubDate>
-			
-			<guid>https://hosfe.lt/posts/adblocker/</guid>
-			<description>Creating a Personal Adblocker over DNS over HTTPS Like most people I know, I really dislike advertisements. Especially the really creepy ones that are far too relevant to what you talked about not even searched for. Also, like most of my friends I own a Raspberry Pi and have it running the Pi-hole software (among other things).
-Well, I did have one setup. Ever since my move I have been a little lazy and do not have much room in my apartment for it let alone do not have drops for a ethernet interface.</description>
-			<content type="html"><![CDATA[<h2 id="creating-a-personal-adblocker-over-dns-over-https">Creating a Personal Adblocker over DNS over HTTPS</h2>
-<p>Like most people I know, I really dislike advertisements. Especially the really creepy ones that are far too relevant to what you <em>talked</em> about not even searched for. Also, like most of my friends I own a <a href="https://www.raspberrypi.org/">Raspberry Pi</a> and have it running the <a href="https://pi-hole.net/">Pi-hole</a> software (among other things).</p>
-<p>Well, I <em>did</em> have one setup. Ever since my move I have been a little lazy and do not have much room in my apartment for it let alone do not have drops for a ethernet interface. I also wanted a setup that worked well on the go without too much hassle to tunnel into my home network.</p>
-<p>So I took a look at what my options were and decided to try to the <a href="https://www.fastly.com/products/compute">Fastly&rsquo;s Compute</a> network, DNS over HTTPS, and WASM to get the job done. So what I came up with was a DNS over HTTPS provider with built in Pi-hole-style adblocking. You can take a look at the code in the <a href="https://github.com/deg4uss3r/wasm-dns-https">repo</a>, I&rsquo;ll go over a lot of the stuff in the <code>README</code> as well as some tradeoffs I had to make with the original idea for now.</p>
-<h2 id="why-doh">Why DoH</h2>
-<p>Aside from being a Simpsons fan, DNS queries over HTTPS (<a href="https://www.rfc-editor.org/rfc/rfc8484">RFC 8484</a>) is a relatively simple spec and implementation and when done properly can be secure. That plus it works nicely using an edge network that can be distributed around the world. Making this a really attractive, fast, and cheap solution! That coupled with being able to block Ads at the DNS level leads to a great solution.</p>
-<h2 id="original-design-and-tradeoffs">Original Design and Tradeoffs</h2>
-<p>Originally, I wanted to send raw DNS packets directly to the edge DNS resolver for authoritative answers; however, WASI-Sockets just <a href="https://github.com/WebAssembly/wasi-sockets">released their specification</a> into the preview when I was beginning to look into this personal project so that made it not quite ready for prime time, but I look forward to seeing that in stable in the future!</p>
-<p>Due to that limitation, I had to go to just pass through requests using another service. Although I am mostly Google-free (I still have my Gmail address I got in the beta back in highschool 👉😎👉) I opted for the <a href="https://developers.google.com/speed/public-dns/docs/doh/json">Google API</a> since it is clean, well done, and has a lot of options I can use in the future.</p>
-<p>Therefore the flow of a request looks like this:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>┌───────────────────────────┐                  ┌───────────────────────────┐                 ┌───────────────────────────┐
-</span></span><span style="display:flex;"><span>│                           │                  │                           │                 │                           │
-</span></span><span style="display:flex;"><span>│                           │                  │                           │                 │                           │
-</span></span><span style="display:flex;"><span>│ RECEIVE REQUEST FROM USER ├──────────────────►  CHECK IF URL SHOULD BE   ├────────────────X│     BLOCK URL AND SEND    │
-</span></span><span style="display:flex;"><span>│                           │                  │           BLOCKED         │                 │       RESPONSE (418)      │
-</span></span><span style="display:flex;"><span>│                           │                  │                           │                 │                           │
-</span></span><span style="display:flex;"><span>└───────────────────────────┘                  └──────────────┬────────────┘                 └───────────────────────────┘
-</span></span><span style="display:flex;"><span>                                                              │                                                           
-</span></span><span style="display:flex;"><span>                                                              │                                                           
-</span></span><span style="display:flex;"><span>                                                              │                                                           
-</span></span><span style="display:flex;"><span>                                                              │                                                           
-</span></span><span style="display:flex;"><span>                                                              │                                                           
-</span></span><span style="display:flex;"><span>                                                              │                                                           
-</span></span><span style="display:flex;"><span>                                                              │                                                           
-</span></span><span style="display:flex;"><span>                                                              │                                                           
-</span></span><span style="display:flex;"><span>                                                ┌─────────────▼─────────────┐                                             
-</span></span><span style="display:flex;"><span>                                                │                           │                                             
-</span></span><span style="display:flex;"><span>                                                │                           │                                             
-</span></span><span style="display:flex;"><span>                                                │  CHECK CACHE FOR RESPONSE │                                             
-</span></span><span style="display:flex;"><span>                                                │                           │                                             
-</span></span><span style="display:flex;"><span>                                                │                           │                                             
-</span></span><span style="display:flex;"><span>                                                └─────────────┬─────────────┘                                             
-</span></span><span style="display:flex;"><span>                                                              │                                                           
-</span></span><span style="display:flex;"><span>                                                              │                                                           
-</span></span><span style="display:flex;"><span>                                                              │                                                           
-</span></span><span style="display:flex;"><span>                                                              │                                                           
-</span></span><span style="display:flex;"><span>                                                              │                                                           
-</span></span><span style="display:flex;"><span>                                                ┌─────────────┴──────────────┐                                            
-</span></span><span style="display:flex;"><span>                                                │                            │                                            
-</span></span><span style="display:flex;"><span>                                                │                            │                                            
-</span></span><span style="display:flex;"><span>                                                │                            │                                            
-</span></span><span style="display:flex;"><span>                                                │                            │                                            
-</span></span><span style="display:flex;"><span>                                 ┌──────────────▼────────────┐ ┌─────────────▼─────────────┐                              
-</span></span><span style="display:flex;"><span>                                 │                           │ │                           │                              
-</span></span><span style="display:flex;"><span>                                 │                           │ │                           │                              
-</span></span><span style="display:flex;"><span>                                 │  SEND REQUEST TO GOOGLE   │ │  SERVE FROM CACHE (200)   │                              
-</span></span><span style="display:flex;"><span>                                 │                           │ │                           │                              
-</span></span><span style="display:flex;"><span>                                 │                           │ │                           │                              
-</span></span><span style="display:flex;"><span>                                 └──────────────┬────────────┘ └───────────────────────────┘                              
-</span></span><span style="display:flex;"><span>                                                │                                                                         
-</span></span><span style="display:flex;"><span>                                                │                                                                         
-</span></span><span style="display:flex;"><span>                                 ┌──────────────▼────────────┐                                                            
-</span></span><span style="display:flex;"><span>                                 │                           │                                                            
-</span></span><span style="display:flex;"><span>                                 │                           │                                                            
-</span></span><span style="display:flex;"><span>                                 │  FORWARD RESPONSE (200)   │                                                            
-</span></span><span style="display:flex;"><span>                                 │                           │                                                            
-</span></span><span style="display:flex;"><span>                                 │                           │                                                            
-</span></span><span style="display:flex;"><span>                                 └───────────────────────────┘                                                            
-</span></span></code></pre></div><h3 id="another-tradeoff">Another Tradeoff</h3>
-<p>Another current tradeoff I am making while I look to get a KV Store implementation is I am storing the &ldquo;massive&rdquo; 5.1MB list of blocked URLs in memory during each spin up of of the application. Obviously this is inefficient but the list was too large for the normal storage options (and honestly that would be a pretty big abuse of things like config store).</p>
-<p>The current plan is to use a KV store that is accessible from every instance, and if needed utilize a <a href="https://en.wikipedia.org/wiki/K-anonymity">k-anonymous</a> key to reliable get back a set of values that will contain the result but be able to pack more values into each KV pair if it is too large still. I have left this for a future implementation/optimization for now.</p>
-<p>Another thing I would like to do is make a script that I can easily add to the list (or remove if necessary). It will probably be a separate script to do so but it will be nice since a lot of the editors struggle with the size of this file and doing so with the <a href="https://www.fastly.com/documentation/reference/cli/kv-store-entry/">Fastly CLI</a> appears easy.</p>
-<h3 id="fun-optimization">Fun Optimization</h3>
-<p>A very neat optimization of using an edge network (especially Fastly&rsquo;s unique architecture) is the ability to store results in cache effectively skipping the lookup to Google&rsquo;s APIs all together and <em>more than halving</em> (from about 90,000μs to about 40,000μs (about .1 -&gt; 0.04 seconds)) the response time from a full lookup, that&rsquo;s a pretty incredible speedup for just a few lines of code!</p>
-<p>This is implemented to only store the URL in cache after the result is returned to the user so I never store anything that is blocked (and a blocked URL exits immediately after the positive lookup to the array). This is a pretty neat feature but does have a slight hiccup that at each Point of Presence (POP) has an individual cache, so for example if I am traveling I won&rsquo;t get the same immediate benefits of the quick lookups on the first response. However any subsequent lookups will be stored an easily revisited. The other issue is cache is used for everyone so anything we access here if unpopular can be overridden, so the more I use it the faster it would get!</p>
-<h3 id="logging-and-observability">Logging and Observability</h3>
-<p>In order to try out a new observability platform during this project I started using <a href="https://honeycomb.io">honeycomb</a>. This leads us into a warning:</p>
-
-    <aside class="admonition danger">
-        <div class="admonition-title">
-            <div class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-alert-triangle"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg></div><b>WARNING</b>
-        </div>
-        <div class="admonition-content"><p>Please do not use my service if you care anything about privacy as since this is a personal project I can see all of the requests and where they come from.</p>
-<p>It is a (far) future optimization for me to make this more privacy conscious.</p>
-</div>
-    </aside>
-<p>That being said I have some really good observability in place with support for dynamically logging any additional fields. Using the following option in the Honeycomb UI:</p>
-<p><img src="/images/honeycomb.png" alt="Image on Honeycomb&rsquo;s site showing an unpack nested JSON toggle and the depth to look for" title="Image on Honeycomb's site showing an unpack nested JSON toggle and the depth to look for"></p>
-<p>One trip-up I hit while getting logging setup was I <em>had</em> to send a specific shape to the Honeycomb service for it to be parsed properly, it wasn&rsquo;t explicitly said in any of the documentation I saw and it&rsquo;s fairly simple but it has to look like this:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#ff79c6">struct</span> <span style="color:#50fa7b">LogFormat</span> {
-</span></span><span style="display:flex;"><span>    time: <span style="color:#8be9fd;font-style:italic">String</span>,
-</span></span><span style="display:flex;"><span>    data: <span style="color:#50fa7b">LogData</span>,
-</span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>The <code>LogData</code> there can be anything (I use 2 levels of nested structures) that can be deserialized into JSON but it must take that overall shape to be parsed correctly. For example here is the shape of my <code>LogData</code>:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#ff79c6">struct</span> <span style="color:#50fa7b">LogData</span> {
-</span></span><span style="display:flex;"><span>    id: <span style="color:#8be9fd;font-style:italic">String</span>,
-</span></span><span style="display:flex;"><span>    level: <span style="color:#8be9fd;font-style:italic">String</span>,
-</span></span><span style="display:flex;"><span>    fastly_version: <span style="color:#8be9fd">u32</span>,
-</span></span><span style="display:flex;"><span>    message: <span style="color:#8be9fd;font-style:italic">String</span>,
-</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">#[serde(flatten, skip_serializing_if = </span><span style="color:#f1fa8c">&#34;HashMap::is_empty&#34;</span><span style="color:#ff79c6">)]</span>
-</span></span><span style="display:flex;"><span>    additional_info: <span style="color:#50fa7b">HashMap</span><span style="color:#ff79c6">&lt;</span><span style="color:#8be9fd;font-style:italic">String</span>, <span style="color:#8be9fd;font-style:italic">String</span><span style="color:#ff79c6">&gt;</span>,
-</span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>This gives me a good way (since the ID is a Fastly <code>$ENVAR</code> constant per compute request) to find the flow of a single request and know which version of my application this processed on (helpful if I am looking at an update and waiting for the new version to deploy).</p>
-<h2 id="results">Results</h2>
-<p>So onto the results! I have not started using this as a majority daily driver yet (I am using Firefox developer edition to test this alongside vanilla Firefox). I need to get a verified <code>plist</code> entry for my personal devices to use this system-wide and not just through the browser to be more useful. The short of the results are I am seeing the average page load to be about <em>twice as fast</em>, when they are served from cache about <em>4 times as fast</em> for some of the worse offenders. With no &ldquo;we see you have an adblocker&rdquo; interstitial or pop ups!</p>
-<p>I won&rsquo;t get into what I think that does to the web but I am glad I have yet-another-way™️ to block advertisements that I do not want to see and ads no daily value to my web experience.</p>
-<p>Overall, this was a really fun project. I learned a ton about DNS, working on an edge networking, OS configuration, and observability.</p>
-<h2 id="next-steps">Next Steps</h2>
-<p>I am looking forward to making this a bit more secure and setting up some <code>plist</code>s to run this with signing on MacOS and iOS so I can use this all the time. I&rsquo;ll throw some updates on the repository when that&rsquo;s done, stay tuned or file an issue if you notice anything that could be improved!</p>
-]]></content>
-		</item>
-		
-		<item>
-			<title>This Blog is on the Edge Part 2: The Journey Continues</title>
-			<link>https://hosfe.lt/posts/edge2/</link>
-			<pubDate>Mon, 22 Jan 2024 16:16:18 -0500</pubDate>
-			
-			<guid>https://hosfe.lt/posts/edge2/</guid>
-			<description>Part 2: The Journey Continues This is part two of how I got my blog on the edge using Fastly&amp;rsquo;s Compute network. In this part I&amp;rsquo;ll go over DNS, certificate setup, and what I use to build and deploy the blog in more detail.
-Note This post will be pretty Fastly specific when it comes to DNS and managing the certificates In case you missed it the first part is here.</description>
-			<content type="html"><![CDATA[<h1 id="part-2-the-journey-continues">Part 2: The Journey Continues</h1>
-<p>This is part two of how I got my blog on the edge using Fastly&rsquo;s Compute network. In this part I&rsquo;ll go over DNS, certificate setup, and what I use to build and deploy the blog in more detail.</p>
-
-    <aside class="admonition note">
-        <div class="admonition-title">
-            <div class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-edit-2"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg></div><b>Note</b>
-        </div>
-        <div class="admonition-content">This post will be pretty Fastly specific when it comes to DNS and managing the certificates</div>
-    </aside>
-<p>In case you missed it the <a href="https://hosfe.lt/posts/edge/">first part is here</a>.</p>
-<h2 id="its-always-dns">It&rsquo;s Always DNS</h2>
-<p>I will admit I am not an expert here and what I have works for me and I had to run through a few trail and error runs to get what I wanted working.</p>
-<p>With that out of the way the first thing to do is take your domain name and in the <a href="https://manage.fastly.com">Fastly Admin Portal</a> on your compute service from part 1 add them to the  <code>Domains</code> section (this is the exact URL users will input when they want to visit your site).</p>
-<p>Here I have both (hosfe.lt and <a href="https://www.hosfe.lt">www.hosfe.lt</a>). In the Fastly world it is better to have a subdomain (<code>www</code> or the like, I am planning on using <code>ricky</code> in the near future). I&rsquo;ll explain why later.</p>
-<p>Once this is done move onto the <code>Hosts</code>, here is the specific host you want to use (this can be just your root level domain e.g. hosfe.lt) as it will be the one the certificate covers. Normally this would be your origin but since this site is completely on the edge we are just using it for certificate security at this point.</p>
-<h2 id="tls">TLS</h2>
-<p>Now to secure the site we need to use the <code>Secure</code> feature of the dashboard. Here we can generate certificates for our host and any subdomains (I used the wildcard domain since I&rsquo;ll probably be moving from the root to <code>ricky.hosfe.lt</code> in the future and adding more subdomains for experiements). If you can I would recommend doing your root plus whatever subdomains you want (or wildcard).</p>
-<p>This step will also required you to put in an <code>_acme-challenge</code> to verify you actually own your domain. I use Digital Ocean for my domain networking and throwing that <code>CNAME</code> in along with it&rsquo;s value was easy. The first certificate took about 10 minutes to verify and propagate after that they have been less than a minute.</p>
-<h2 id="dns-part-2-theres-always-a-part-2">DNS Part 2: There&rsquo;s Always a Part 2</h2>
-<p>Once, you have your TLS certificate setup you should be good to go! In order to take full advantage of the edge you need to use a subdomain. This is because root domains are not allows to have a <code>CNAME</code> entry for them and must point to an <code>A</code> or <code>AAAA</code> record. You <em>can</em> use Compute with a root domain and I&rsquo;ll show you how to find that here.</p>
-<h3 id="finding-your-cname-reference-for-subdomains">Finding Your CNAME Reference for Subdomains</h3>
-<p>After we have created our TLS under the secure tab we need to know <em>which</em> type of certificate we created. Going into the <code>Secure</code> App and <code>TLS Management</code> area we can click to view the certificate to see if we have a <code>t</code> or <code>s</code> type.</p>
-<p><img src="/images/edge-post-2_certificate.png" alt="Which certificate type is active"></p>
-<p>Once we know that we can give our subdomain a <code>CNAME</code> that Fastly will utilize over the whole edge network. If you need more help there&rsquo;s a lot more info on the <a href="https://docs.fastly.com/en/guides/working-with-cname-records-and-your-dns-provider#tls-enabled-hostnames">developer docs</a></p>
-<h3 id="finding-the-ip-address-for-your-a-record-and-root-domain">Finding the IP Address for your A Record and Root Domain</h3>
-<p>While we are here we can also give the root domain an IP address to hit if you are keen on using that. This won&rsquo;t take advantage of the whole edge at first so this is why I mentioned previously that it was better to use a subdomain. There&rsquo;s a lot more info <a href="https://docs.fastly.com/en/guides/using-fastly-with-apex-domains#when-you-have-tls-configured">here</a>.</p>
-<p>That&rsquo;s it, you should now have a working secured website that is completely on the Fastly Compute network! Honestly, it&rsquo;s more work than GeoCities was but given the flexibility I am exited for the <a href="https://www.rollingstone.com/culture/culture-commentary/internet-future-about-to-get-weird-1234938403/">internet to get weird again</a>.</p>
-<h2 id="hugo">Hugo</h2>
-<p>In case you&rsquo;re wondering the static site generator I am currently using is <a href="https://gohugo.io">Hugo</a>. The Theme is <a href="https://themes.gohugo.io/themes/hermit-v2/">hermit-v2</a>. Realistically I wanted a simple yet customizable theme and went with the first I found. I can also change it out pretty easily. Top that with an incredibly simple build system (literally compiling the site by just <code>hugo</code>) and I was sold.</p>
-<h2 id="how-to-deploy-and-github-actions">How to Deploy and GitHub Actions</h2>
-<p>Lastly, how I currently deploy the blog. You can see my <a href="https://github.com/deg4uss3r/hosfe.lt/blob/main/.github/workflows/test.yml">GitHub Actions YAML here</a>. The important part is that I split this in two stages. A test and check on each commit/PR and a deploy only on a tag. This helps me control when I actually push content to the blog.</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#ff79c6">deploy</span>:
-</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">if</span>: |<span style="color:#f1fa8c">
-</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c">      startsWith(github.ref, &#39;refs/tags/v&#39;) &amp;&amp; needs.test.result == &#39;success&#39;</span>      
-</span></span></code></pre></div><p>I love that little <code>if</code> statement. It will only deploy if the test suite was successful on a tagged run.</p>
-<p>Further one thing I found confusing at first was I needed to use the Fastly <code>fastly/compute-actions@v5</code> action not just the <code>deploy</code> action as it still needs to compile and ship the WASM binary. After that it was pretty easy to get working, it will use the <code>fastly.toml</code> at the root of the project and off it goes just like doing it via the CLI (see <a href="https://hosfe.lt/posts/edge/">Part 1</a> to set that up).</p>
-
-    <aside class="admonition danger">
-        <div class="admonition-title">
-            <div class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-alert-triangle"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg></div><b>WARNING</b>
-        </div>
-        <div class="admonition-content">Don&rsquo;t forget to store your Fastly API token in GitHub Secrets so you don&rsquo;t expose it!</div>
-    </aside>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span>      <span style="color:#ff79c6">env</span>:
-</span></span><span style="display:flex;"><span>        <span style="color:#ff79c6">FASTLY_API_TOKEN</span>: ${{ secrets.FASTLY_API_TOKEN }}
-</span></span></code></pre></div><h2 id="whats-next">What&rsquo;s next?</h2>
-<p>First, there&rsquo;s some DNS changes I want to make which won&rsquo;t be too bad and shouldn&rsquo;t have an affect on the structure of the site. Moving from the root domain for the blog to <code>ricky.hosfe.lt</code> and making the root a landing page only.</p>
-<p>For the website I got some great suggestions and probably the first one will be compressing the included HTML text (and incorporated images) and shrinking the size of the WASM binary that gets uploaded (right now sitting at 1.78Mb). Though with the inline image I&rsquo;m sure a little larger as of today.</p>
-<p>Next, I would like to add much more logging and statistics to understand traffic flow and be able to play with observability and what&rsquo;s possible with the compute platform (with the added benefit of knowing how little people have read the blog).</p>
-<p>Slowly but surely I&rsquo;ll get to those but I also want to sprinkle in writing on some topics I want to chat about. So see you soon and I hope this helps, enjoy!</p>
-]]></content>
-		</item>
-		
-		<item>
-			<title>It&#39;s 2024 and This Blog is Now On The Edge</title>
-			<link>https://hosfe.lt/posts/edge/</link>
-			<pubDate>Fri, 05 Jan 2024 09:18:47 -0500</pubDate>
-			
-			<guid>https://hosfe.lt/posts/edge/</guid>
-			<description>I&amp;rsquo;m Six Feet From The Edge and I&amp;rsquo;m Thinking&amp;hellip; Well, unlike that Classic Creed Song One Last Breath that was on the radio when I was a kid I&amp;rsquo;m actually on the edge! However, not in the way the song was intended, definitely in a technical sense.
-I am taking advantage of learning at my new job by utilizing Fastly&amp;rsquo;s Edge Compute service and deploying this blog from their edge network making this site 100% delivered from a WASM pre-compiled binary.</description>
-			<content type="html"><![CDATA[<h1 id="im-six-feet-from-the-edge-and-im-thinking">I&rsquo;m Six Feet From The Edge and I&rsquo;m Thinking&hellip;</h1>
-<p>Well, unlike that <a href="https://www.youtube.com/watch?v=qnkuBUAwfe0">Classic Creed Song</a> <em>One Last Breath</em> that was on the radio when I was a kid I&rsquo;m actually on the edge! However, not in the way the song was intended, definitely in a technical sense.</p>
-<p>I am taking advantage of learning at my new job by utilizing <a href="htttps://fastly.com">Fastly&rsquo;s</a> Edge Compute service and deploying this blog from their edge network making this site 100% delivered from a WASM pre-compiled binary. In this post I&rsquo;ll be explaining how I did it along with some lessons I learned along the way.</p>
-<h2 id="why-i-put-the-blog-on-the-edge">Why I Put The Blog On The Edge</h2>
-<p>Previously, for about 10 years I have been using the same <a href="https://digitalocean.com">Digital Ocean</a> Droplet as a Virtual Private Server (VPS) serving my site. I have no complaints and it has only been about $7/month to have a website that I can do almost anything with! However, it&rsquo;s gotten pretty out-of-date on the backend and I did not have a real good way to fully automate a deployment without doing (in my opinion) a lot of work. Plus, a new friend saw my certificates were expired again and pushed me to start digging more into better ways to manage those (thanks Colton!).</p>
-<h3 id="but-what-advantage-does-the-edge-have">But What Advantage Does The Edge Have?</h3>
-<p>Many people will be able to describe this better than me, <a href="https://www.fastly.com/blog/no-origin-static-websites-at-the-edge">Kats for example here</a>, but for me the main advantage is freeing up my VPS for updating, more experiments, learning a new technology, and hosting a faster blog around the world.</p>
-<h3 id="in-your-own-wordswhat-is-the-edge">In Your Own Words&hellip;What Is The Edge?</h3>
-<p>The Edge is essentially a CDN but instead of content sitting in cache around the world it is computed on the fly when requested at the site that&rsquo;s closest. Both a CDN and the Edge offer faster websites and I wanted to move closer to one repository and deploy method for the site. That and since my site is <em>so simple</em> I opted for compute instead of a traditional CDN.</p>
-<p>Finally I could take advantage of things like <a href="https://docs.fastly.com/products/certainly">Certainly</a> and never have to worry about updating my TLS certificates again, something that definitely happened to me at least twice a year while I was trying to get <code>certbot</code> to play nice with cron jobs (not a knock against it, <a href="https://letsencrypt.org/">Let&rsquo;s Encrypt</a> is an amazing resource and pretty much the only reason I&rsquo;ve had a website for so long).</p>
-<h2 id="how-to-get-started">How To Get Started</h2>
-<p>There&rsquo;s essentially two paths you have to work on in parallel the raw code for the blog and the setting up of the networking to point to the edge network to serve said code.</p>
-<h3 id="some-warnings-first">Some Warnings First</h3>
-<p>I am definitely not done with the blog that&rsquo;s for sure! As well as I am very certain there are better ways to do things but I wanted to give a little insight into how I learned and pieced together the information to get this working. If you have any suggestion throw in <a href="https://github.com/deg4uss3r/hosfe.lt/issues">an issue</a> for me!</p>
-
-    <aside class="admonition success">
-        <div class="admonition-title">
-            <div class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-check-circle"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg></div><b>Info</b>
-        </div>
-        <div class="admonition-content">I am a Fastly employee (and very new). So anything in the blog does not speak for Fastly itself but my own personal experience using the products they provide.</div>
-    </aside>
-<p>Finally, this blog and post (and my life) will be centered around Rust. There&rsquo;s plenty of resources for other languages (like <a href="https://developer.fastly.com/learning/compute/javascript/">JavaScript</a> and <a href="https://developer.fastly.com/learning/compute/go/">Go</a>, but I know very little about those).</p>
-<h3 id="the-blogs-code">The Blog&rsquo;s Code</h3>
-<p>The main focus of this section will be my <code>main.rs</code> Rust module (<a href="https://github.com/deg4uss3r/hosfe.lt/src/main.rs">on GitHub</a>). The source HTML is also in there but that is less interesting and I will briefly cover that later.</p>
-<p>The main content is very simple just a large <code>match</code> statement based off of the incoming request&rsquo;s path and then serving that in a response through pre-compiled HTML. essentially this boils down to very few lines of code:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#ff79c6">match</span> req.get_path() {
-</span></span><span style="display:flex;"><span>  <span style="color:#f1fa8c">&#34;/&#34;</span> <span style="color:#ff79c6">=&gt;</span> include_str!(<span style="color:#f1fa8c">&#34;../index.html&#34;</span>),
-</span></span><span style="display:flex;"><span>  _ <span style="color:#ff79c6">=&gt;</span> include_str!(<span style="color:#f1fa8c">&#34;../404.html&#34;</span>),
-</span></span><span style="display:flex;"><span>} 
-</span></span></code></pre></div><p>Yes, astute readers will realize that every new page will need a new line to that match statement; however, it&rsquo;s a small price to pay for this being <em>incredibly simple</em>. I could setup some glob matches if I hosted the pages on an external service (e.g. S3, Droplet, etc.). That&rsquo;s something I&rsquo;d like to explore on a future date but for now this is fast, convenient, and fits nicely into a simple enough workflow for a very casual website updater 😅.</p>
-<p>A quick note on the <code>include_str!()</code> <a href="https://doc.rust-lang.org/std/macro.include_str.html">macro</a>. If you&rsquo;re not immediately familiar this is including the input file in the compiled binary. So while sacrificing binary size by including the text there&rsquo;s no file system lookup or network hit required to serve each request. It also has the advantage that if that file does not exist the binary will not compile so I cannot serve you a file that does not exist (but I can leave out files that <em>do</em> exist).</p>
-<h3 id="okay-but-how-do-you-get-started">Okay, But How Do You Get Started?</h3>
-<p>So that is all simple enough but getting started was a little bit confusing for me (I could not find a specific set of cohesive steps to get started) so I&rsquo;ll walk through how I did it. Previous caveats apply here, this is information I cobbled together and not the <em>best</em> way but a way that works for me.</p>
-<p>Throughout this guide I&rsquo;ll be using Fastly as mentioned previously.</p>
-<p>First, I created my <a href="https://manage.fastly.com/home">Fastly account</a> and set it up in the following way to create an edge compute service.</p>
-<p>Next, is to create a compute service. Do not worry about a domain or host for now you can set it to anything you want and change it later. We will use the test generated link and setup the networking later. Make sure to save your <code>service_id</code> as it will be necessary to push an update to that newly created service.</p>
-<p>To use the Fastly CLI (next step) you&rsquo;ll need a new token with permissions to do so. In the Fastly Management domain go to your Profile (upper right) &gt; Account &gt; API Tokens (lower left) and generate an API token with Global API Access both the first option (<code>Global</code>) for full control and Global Read (<code>global:read</code> is enable by default but write is not).</p>
-
-    <aside class="admonition danger">
-        <div class="admonition-title">
-            <div class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-alert-triangle"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg></div><b>WARNING</b>
-        </div>
-        <div class="admonition-content">make <em>sure</em> you save this token off as soon as you navigate away from this screen you will lose access to display the token again for security reasons.</div>
-    </aside>
-
-    <aside class="admonition danger">
-        <div class="admonition-title">
-            <div class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-alert-triangle"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg></div><b>WARNING</b>
-        </div>
-        <div class="admonition-content">make sure to keep this safe it&rsquo;s a secret. Just like any secret key, it could cost you money if you leak it. I suggest immediately storing it in a password manager like <a href="https://1password.com">1Password</a> so you can access it safely and from the CLI (I&rsquo;ll show you how to do this as well). Finally, for security I do recommend letting this expire and generating a new one roughly every 6 months.</div>
-    </aside>
-<p>After that I installed the <a href="https://developer.fastly.com/reference/cli/">Fastly CLI</a> (or you can do everything from the web if you prefer but I like using CLIs so I do when I can). For me that was as simple as following the <code>brew install fastly/tap/fastly</code> command.</p>
-<p>Next up we&rsquo;ll test out a working CLI interface. I use 1Password&rsquo;s CLI to help insert secrets without leaking them (read the install instructions here: <a href="https://developer.1password.com/docs/cli/get-started/">1Password CLI</a>); however, you can do what you are most comfortable with (both security and tool-wise). The command I would recommend running first is:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fish" data-lang="fish"><span style="display:flex;"><span>~ fastly whoami <span style="color:#50fa7b">--token</span> <span style="color:#8be9fd;font-style:italic">$(</span><span style="color:#50fa7b">op</span> item get <span style="color:#f1fa8c">&#34;</span><span style="color:#8be9fd;font-style:italic">$YOUR_FASTLY_ITEM_NAME</span><span style="color:#f1fa8c">&#34;</span> <span style="color:#50fa7b">--fields</span> <span style="color:#8be9fd;font-style:italic">$YOUR_API_TOKEN_FIELD_NAME</span><span style="color:#ff79c6">)</span>
-</span></span></code></pre></div><p>If you get an output with your name and email you are good to go! Otherwise it would appear the account token you&rsquo;ve generated isn&rsquo;t working or you have a previous configuration somewhere that is messing with it. Reach out to the <a href="https://developer.fastly.com/">Fastly Developer Docs</a> or the <a href="https://community.fastly.com/">Contact the community</a> for additional help.</p>
-<p>Once you have a successful result from <code>whoami</code> you&rsquo;re ready to push to your service! I would recommend following the <a href="https://github.com/fastly/compute-starter-kit-rust-default">Rust template repository</a> by forking it and pushing a single simple page (e.g. one match arm with the catchall as well) with anything you want. Do so by calling the following inside the template repo:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fish" data-lang="fish"><span style="display:flex;"><span>~ fastly compute publish <span style="color:#50fa7b">--token</span> <span style="color:#8be9fd;font-style:italic">$YOUR_TOKEN</span> <span style="color:#50fa7b">--service-id</span> <span style="color:#8be9fd;font-style:italic">$YOUR_SERVICE_ID</span>
-</span></span></code></pre></div><p>Once that deploys you can check it via the Management portal, click on Compute &gt; Your Service &gt; Version Number &gt; Then you should see &ldquo;Test Domain&rdquo; next to your domain.</p>
-<p>As you get more complex or if you want to test the binary locally you can do so very easily just:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-fish" data-lang="fish"><span style="display:flex;"><span>~ fastly compute serve
-</span></span></code></pre></div>
-    <aside class="admonition tip">
-        <div class="admonition-title">
-            <div class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-sun"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg></div><b>💡</b>
-        </div>
-        <div class="admonition-content">That will create the binary and host it locally to <code>127.0.0.1:7676</code></div>
-    </aside>
-<p>There&rsquo;s quite a few starter kits (including in different languages) on the <a href="https://github.com/search?q=%22fastly%2Fcompute-starter-kit%22+owner%3Afastly+&amp;type=repositories">Fastly Organization</a> take a look through I just picked the one I found the simplest to get started!</p>
-<h4 id="fastlys-template-structure-explained">Fastly&rsquo;s Template Structure Explained</h4>
-<p>If you fork one of Fastly&rsquo;s template repositories there&rsquo;s some files in there that probably need a bit of explaining. I&rsquo;ll quickly go over those.</p>
-<p><code>rust-toolchain.toml</code> - You might be already familiar with this but it&rsquo;s essentially controlling what version of Rust and what compile targets you need. This one helps compile for WASM which we need for deployment. From here you can add more options but I just left it as default stable toolchain.</p>
-<p><code>fastly.toml</code> - This is the controlling file for the options on your Compute service. You&rsquo;ll want to change the author, description, name, and add in the field <code>service_id</code> (I originally thought this was a secret but common practice allows for this in the <code>toml</code>). Adding in <code>service_id</code> now means it will be easier to get the GitHub action working (coming in part 2) as well as you can remove the <code>--service_id</code> option from all future command line arguments.</p>
-<p><code>Cargo.toml</code> - I will assume you know the basics here but one thing you&rsquo;ll definitely want to change if you fork is the name (of the package), author, and I also upped the edition from <code>2018</code> to <code>2021</code> with no ill effects. I would recommend keeping <a href="https://doc.rust-lang.org/cargo/reference/manifest.html#the-publish-field">publish</a> to <code>false</code>.</p>
-<p><code>README</code> - I definitely forgot to change this at first, so learn from my mistakes!</p>
-<p><code>./.github/CODEOWNERS</code> - This is for the Fastly organization and template, change and/or remove this file it won&rsquo;t work anyways!</p>
-<h2 id="to-be-continued">To Be Continued&hellip;</h2>
-<p>That is pretty much all you need to really get started with the edge using a test domain. In the next post (since this one has gotten a little longer than I anticipated) I&rsquo;ll explain my DNS and deployment setup. I hope this was helpful!</p>
-]]></content>
-		</item>
-		
-		<item>
-			<title>My Path To Management</title>
-			<link>https://hosfe.lt/posts/story/</link>
-			<pubDate>Wed, 19 Apr 2023 21:19:00 +0000</pubDate>
-			
-			<guid>https://hosfe.lt/posts/story/</guid>
-			<description>From an early point in my career I have always wanted to lead. Not out of ego, but I have always loved helping others.
-In high school I was part of a small company (woo Spearfish Industries, thanks Steve and Dave ;)) that helped local businesses with the internet, websites, graphic design, and videography. This was my entry into computer science and I absolutely loved it I went from the lead graphic designer to the network admin and started to really enjoy setting up routers and explaining the settings to grandmas and business owners alike.</description>
-			<content type="html"><![CDATA[<p>From an early point in my <a href="https://ricky.hosfelt.dev/resume/">career</a> I have always wanted to lead. Not out of ego, but I have always loved helping others.</p>
-<p>In high school I was part of a small company (woo Spearfish Industries, thanks Steve and Dave ;)) that helped local businesses with the internet, websites, graphic design, and videography. This was my entry into computer science and I absolutely loved it I went from the lead graphic designer to the network admin and started to really enjoy setting up routers and explaining the settings to grandmas and business owners alike.</p>
-<p>Cue to <a href="https://iup.edu">university</a> where I made a small mistake, much to my friends future-sight, of majoring in business rather than engineering. I knew I had made a bad choice in my second semester but barely making ends meet with 2 part time jobs and no connections a degree is better than nothing I thought. So I continued on with ease and taking all the math my schedule would allow. Then graduated with a BS in Human Resources Management in 3 years.</p>
-<p>Afterwards, I was extremely lucky to get a job a huge place (the US government) as a technical recruiter for their cooperative education program. After a year a two (and starting my masters in engineering) I was able to transfer to a technical office that took a chance on me (infinite thanks to Jackie and Dave) and I found a new love, network protocols.</p>
-<p>Protocols are the formats and standards of information transfer and understanding them and their specifications (<a href="https://datatracker.ietf.org/doc/html/rfc8962">RFC</a>s) is a wonder. I got to see brand new things, reverse engineer modifications, and write software (think <a href="https://www.wireshark.org/">Wireshark</a> but not in Lua) to accurately and efficiently parse them.</p>
-<p>I was good at this. Really good. In just a year, I was a respected team lead and selected for a lot of really amazing opportunities that I cannot go into too much details on.</p>
-<p>I then was able to accept a special assignment teaching protocols and software development in England. It was a blast and I really enjoyed getting the opportunity to live and travel so much (not bad for someone who got their passport at 23!). I took full advantage of this opportunity and soon came to realize I wanted more and the leadership aspect came back.</p>
-<p>After leading some really cool projects with the <a href="https://www.elastic.co/what-is/elk-stack">ELK</a> stack, refining proper software engineering guidelines, and implementing <a href="https://www.rust-lang.org/">Rust</a> in production software I was not moving and advancing fast enough (cue red tape). I then decided it was time to leave the government and take some risks for my career development.</p>
-<p>My next opportunity was short but no less amazing. I got the amazing ability to work with Machine Learning as a strict software developer at <a href="https://www.sei.cmu.edu/">Carnegie Mellon University’s Software Engineering Institute</a> (CMU, SEI). Thank you to Matt, Dave, Ritwik, Erik, Jay, and Carol. My favorite thing I got to do there was <a href="https://xview2.org/">xView2</a> it was an amazing humanitarian project (thanks Nirav and Bryce ;)) that helps first responders understand and accesses damage to areas by satellite imagery and Machine Learning on the edge.</p>
-<p>After that project was done I did understand ML, but I knew it wasn’t my passion and I needed to follow what I truly wanted to do. I really enjoy both Rust (I think that’s obvious if you made it this far) and using technology for good. One lucky day I saw a job opportunity in This Week in Rust for a little company called <a href="https://1Password.com">1Password</a>.</p>
-<p>After some research into this company I was sold. Managing passwords for everyone including grandparents and fellow developers with strong technical challenges and an amazing reputation for being kind and helping others, what’s not to love?!</p>
-<p>That gamble, at the time anyone in the US was considered an independent contractor, definitely paid off. I was a Senior Rust Engineer (I am so proud of myself as I look back on this). I never thought I make it this far (thanks to Roo, Dave, Roustem, Beyer, and Mathieu). The work here has been amazing, I have helped with so much (localization, build and release, permission checking and hardening, performance and optimization, countless bug fixes, and so much more) and yet the most I got enjoyment from was again, helping others. Every time I helped someone succeed with building our project the happier I got.</p>
-<p>Then I got to a crux, I am a great developer but my skills are most satisfied and amplified when I put them to use helping my peers. Also my manager had about 60 reports at the time! So I proposed that we start hiring engineering managers in our organization at this 250 person company. The response was “Yes! I don’t know how to get you there but help me hire the first one”.</p>
-<p>It wasn’t a long process (Hello and thanks Chris ;)), then I got the ask “Would you like to be one as well?” and accepted my first management role! It was the best decision I’ve made yet. I was offered to take on the iOS team for 1Password and help maintain 1Password 7 for iOS and macOS as well as ship 1Password 8 for iOS.</p>
-<p>This was both extremely exciting and a huge challenge. OPI8 was not quite ready and we had a “development pause” while the Desktop applications shipped their versions. During this time I was also learning the fundamentals of being a manager such as; holding 1:1s, resolving disputes, planning and organizing features, hiring, coordinating developers for sub teams, and also contributing Rust code that was helpful for my team.</p>
-<p>To get out of the pause I had planned (a post on this coming in the future) a large scale re-ignition effort and push to eliminate the current tech debt and set us up nice for the final push to release. This period lasted 2 months and we were able to finish exact on time with all issue on our Milestone closed! Really a huge effort and monumental win for the team, something I am very proud of to this day.</p>
-<p>After that, we were ready to begin the push for both a TestFlight and eventually a final release to the world. We started many initiatives and helpful models that enabled us to keep development focused and hit our goals for release. We worked very close (closer than every before at our company) with design and product to ensure all features were development ready when the designs were completed and product made the final decisions to include at our initial launch.</p>
-<p>Then the time came! OPI8 was released to the world with, honestly a resounding success! Our customers really love 1Password 8 for iOS and I am very proud of the team (Kevin, Rudy, Chad, Craig, Craig, Drew, Brian, Chris, Chris, Alessandro, Julieta, Jeanine, you all rock!). It’s one of the best moments I’ve had in my career by far, over 1 million people using an application I helped lead to success!</p>
-<p>We’re almost to the present day I swear.</p>
-<p>My experience in my current role began soon after the OPI8 release; a reorganization! The entire engineering organization at 1Password went through a reorganization that lead to me getting to not only really build a new team that is very different the my OPI team, but also help (thanks to Katherine, Emily, Avi, Chris, and Chris!) shape an entire organization since we reported directly to the CTO who filled the positions of Director and VP of Engineering.</p>
-<p>It was here where I was able to learn and try new things that gave me a lot of experience with a vastly different group of engineers. I now manage Rust, Swift, Kotlin, and Typescript engineers on a Frameworks team that focuses on designing scaleable, efficient, testable, and safe APIs for other developers to use.</p>
-<p>The team is now functioning well and I am successfully leading them to update our APIs and create easy-to-use frameworks for development that allow us and other teams to not worry about discovery or how to model the problem because we have strong guidelines on that already.</p>
-<p>Thank you if you’ve made it this far as you’re up-to-date with my career now! I’ll keep adding to this as things change but I am hoping this at least gives you a glimpse into what makes Ricky himself at work.</p>
-<ul>
-<li>RH</li>
-</ul>
-]]></content>
-		</item>
-		
-	</channel>
+  <channel>
+    <title>Posts on Ricky Hosfelt</title>
+    <link>https://hosfe.lt/posts/</link>
+    <description>Recent content in Posts on Ricky Hosfelt</description>
+    <generator>Hugo</generator>
+    <language>en-us</language>
+    <copyright>2025</copyright>
+    <lastBuildDate>Wed, 15 May 2024 00:00:00 +0000</lastBuildDate>
+    <atom:link href="https://hosfe.lt/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Adblocker on an Edge Network</title>
+      <link>https://hosfe.lt/posts/adblocker/</link>
+      <pubDate>Wed, 15 May 2024 00:00:00 +0000</pubDate>
+      <guid>https://hosfe.lt/posts/adblocker/</guid>
+      <description>&lt;h2 id=&#34;creating-a-personal-adblocker-over-dns-over-https&#34;&gt;Creating a Personal Adblocker over DNS over HTTPS&lt;a href=&#34;#creating-a-personal-adblocker-over-dns-over-https&#34; class=&#34;anchor&#34; aria-hidden=&#34;true&#34;&gt;&lt;svg xmlns=&#34;http://www.w3.org/2000/svg&#34; viewBox=&#34;0 0 24 24&#34; fill=&#34;none&#34; stroke=&#34;currentColor&#34; stroke-width=&#34;2&#34;&#xA;      stroke-linecap=&#34;round&#34; stroke-linejoin=&#34;round&#34;&gt;&#xA;      &lt;path d=&#34;M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3&#34;&gt;&lt;/path&gt;&#xA;      &lt;line x1=&#34;8&#34; y1=&#34;12&#34; x2=&#34;16&#34; y2=&#34;12&#34;&gt;&lt;/line&gt;&#xA;   &lt;/svg&gt;&lt;/a&gt;&lt;/h2&gt;&#xA;&lt;p&gt;Like most people I know, I really dislike advertisements. Especially the really creepy ones that are far too relevant to what you &lt;em&gt;talked&lt;/em&gt; about not even searched for. Also, like most of my friends I own a &lt;a href=&#34;https://www.raspberrypi.org/&#34;&gt;Raspberry Pi&lt;/a&gt; and have it running the &lt;a href=&#34;https://pi-hole.net/&#34;&gt;Pi-hole&lt;/a&gt; software (among other things).&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>This Blog is on the Edge Part 2: The Journey Continues</title>
+      <link>https://hosfe.lt/posts/edge2/</link>
+      <pubDate>Mon, 22 Jan 2024 16:16:18 -0500</pubDate>
+      <guid>https://hosfe.lt/posts/edge2/</guid>
+      <description>&lt;h1 id=&#34;part-2-the-journey-continues&#34;&gt;Part 2: The Journey Continues&lt;a href=&#34;#part-2-the-journey-continues&#34; class=&#34;anchor&#34; aria-hidden=&#34;true&#34;&gt;&lt;svg xmlns=&#34;http://www.w3.org/2000/svg&#34; viewBox=&#34;0 0 24 24&#34; fill=&#34;none&#34; stroke=&#34;currentColor&#34; stroke-width=&#34;2&#34;&#xA;      stroke-linecap=&#34;round&#34; stroke-linejoin=&#34;round&#34;&gt;&#xA;      &lt;path d=&#34;M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3&#34;&gt;&lt;/path&gt;&#xA;      &lt;line x1=&#34;8&#34; y1=&#34;12&#34; x2=&#34;16&#34; y2=&#34;12&#34;&gt;&lt;/line&gt;&#xA;   &lt;/svg&gt;&lt;/a&gt;&lt;/h1&gt;&#xA;&lt;p&gt;This is part two of how I got my blog on the edge using Fastly&amp;rsquo;s Compute network. In this part I&amp;rsquo;ll go over DNS, certificate setup, and what I use to build and deploy the blog in more detail.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>It&#39;s 2024 and This Blog is Now On The Edge</title>
+      <link>https://hosfe.lt/posts/edge/</link>
+      <pubDate>Fri, 05 Jan 2024 09:18:47 -0500</pubDate>
+      <guid>https://hosfe.lt/posts/edge/</guid>
+      <description>&lt;h1 id=&#34;im-six-feet-from-the-edge-and-im-thinking&#34;&gt;I&amp;rsquo;m Six Feet From The Edge and I&amp;rsquo;m Thinking&amp;hellip;&lt;a href=&#34;#im-six-feet-from-the-edge-and-im-thinking&#34; class=&#34;anchor&#34; aria-hidden=&#34;true&#34;&gt;&lt;svg xmlns=&#34;http://www.w3.org/2000/svg&#34; viewBox=&#34;0 0 24 24&#34; fill=&#34;none&#34; stroke=&#34;currentColor&#34; stroke-width=&#34;2&#34;&#xA;      stroke-linecap=&#34;round&#34; stroke-linejoin=&#34;round&#34;&gt;&#xA;      &lt;path d=&#34;M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3&#34;&gt;&lt;/path&gt;&#xA;      &lt;line x1=&#34;8&#34; y1=&#34;12&#34; x2=&#34;16&#34; y2=&#34;12&#34;&gt;&lt;/line&gt;&#xA;   &lt;/svg&gt;&lt;/a&gt;&lt;/h1&gt;&#xA;&lt;p&gt;Well, unlike that &lt;a href=&#34;https://www.youtube.com/watch?v=qnkuBUAwfe0&#34;&gt;Classic Creed Song&lt;/a&gt; &lt;em&gt;One Last Breath&lt;/em&gt; that was on the radio when I was a kid I&amp;rsquo;m actually on the edge! However, not in the way the song was intended, definitely in a technical sense.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>My Path To Management</title>
+      <link>https://hosfe.lt/posts/story/</link>
+      <pubDate>Wed, 19 Apr 2023 21:19:00 +0000</pubDate>
+      <guid>https://hosfe.lt/posts/story/</guid>
+      <description>&lt;p&gt;From an early point in my &lt;a href=&#34;https://ricky.hosfelt.dev/resume/&#34;&gt;career&lt;/a&gt; I have always wanted to lead. Not out of ego, but I have always loved helping others.&lt;/p&gt;&#xA;&lt;p&gt;In high school I was part of a small company (woo Spearfish Industries, thanks Steve and Dave ;)) that helped local businesses with the internet, websites, graphic design, and videography. This was my entry into computer science and I absolutely loved it I went from the lead graphic designer to the network admin and started to really enjoy setting up routers and explaining the settings to grandmas and business owners alike.&lt;/p&gt;</description>
+    </item>
+  </channel>
 </rss>

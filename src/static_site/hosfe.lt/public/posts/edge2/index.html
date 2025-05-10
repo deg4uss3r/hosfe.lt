@@ -1,36 +1,27 @@
 <!DOCTYPE html>
 <html lang="en-us">
-<head>
-
-  
-
-<meta charset="UTF-8">
+<head><meta charset="UTF-8">
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta http-equiv="X-UA-Compatible" content="ie=edge">
-<meta name="robots" content="index, follow">
-<meta name="revisit-after" content="15 days">
-<link rel="author" href="/humans.txt">
-<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<meta http-equiv="X-UA-Compatible" content="ie=edge"><meta name="robots" content="index, follow"><meta name="author" content="Ricky Hosfelt">
+<meta name="description" content="My personal website for random technology and fun.">
+<link rel="author" type="text/plain" href="/humans.txt">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
 <link rel="manifest" href="/site.webmanifest">
 <meta name="msapplication-TileImage" content="/mstile-144x144.png">
-<link rel="shortcut icon" href="/favicon.ico">
 <meta name="theme-color" content="#494f5c">
 <meta name="msapplication-TileColor" content="#494f5c">
-<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#494f5c"><meta name="author" content="Ricky Hosfelt"><meta name="description" content="My personal website for random technology and fun.">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#494f5c">
 
   <meta itemprop="name" content="This Blog is on the Edge Part 2: The Journey Continues">
-  <meta itemprop="description" content="Part 2: The Journey Continues This is part two of how I got my blog on the edge using Fastly’s Compute network. In this part I’ll go over DNS, certificate setup, and what I use to build and deploy the blog in more detail.
-Note This post will be pretty Fastly specific when it comes to DNS and managing the certificates In case you missed it the first part is here.">
+  <meta itemprop="description" content="Part 2: The Journey Continues This is part two of how I got my blog on the edge using Fastly’s Compute network. In this part I’ll go over DNS, certificate setup, and what I use to build and deploy the blog in more detail.">
   <meta itemprop="datePublished" content="2024-01-22T16:16:18-05:00">
   <meta itemprop="dateModified" content="2024-01-22T16:16:18-05:00">
   <meta itemprop="wordCount" content="1060"><meta property="og:url" content="https://hosfe.lt/posts/edge2/">
   <meta property="og:site_name" content="Ricky Hosfelt">
   <meta property="og:title" content="This Blog is on the Edge Part 2: The Journey Continues">
-  <meta property="og:description" content="Part 2: The Journey Continues This is part two of how I got my blog on the edge using Fastly’s Compute network. In this part I’ll go over DNS, certificate setup, and what I use to build and deploy the blog in more detail.
-Note This post will be pretty Fastly specific when it comes to DNS and managing the certificates In case you missed it the first part is here.">
+  <meta property="og:description" content="Part 2: The Journey Continues This is part two of how I got my blog on the edge using Fastly’s Compute network. In this part I’ll go over DNS, certificate setup, and what I use to build and deploy the blog in more detail.">
   <meta property="og:locale" content="en_us">
   <meta property="og:type" content="article">
     <meta property="article:section" content="posts">
@@ -39,13 +30,45 @@ Note This post will be pretty Fastly specific when it comes to DNS and managing 
 
   <meta name="twitter:card" content="summary">
   <meta name="twitter:title" content="This Blog is on the Edge Part 2: The Journey Continues">
-  <meta name="twitter:description" content="Part 2: The Journey Continues This is part two of how I got my blog on the edge using Fastly’s Compute network. In this part I’ll go over DNS, certificate setup, and what I use to build and deploy the blog in more detail.
-Note This post will be pretty Fastly specific when it comes to DNS and managing the certificates In case you missed it the first part is here.">
-<title>This Blog is on the Edge Part 2: The Journey Continues</title>
-<link rel="stylesheet dns-prefetch preconnect preload prefetch" as="style" href="https://hosfe.lt/css/style.min.dbbe08cb3b07bbce02de1a13a57d4221bb75487e75b0d1a5196a5353f7135921.css" integrity="sha256-274IyzsHu84C3hoTpX1CIbt1SH51sNGlGWpTU/cTWSE=" crossorigin="anonymous">
+  <meta name="twitter:description" content="Part 2: The Journey Continues This is part two of how I got my blog on the edge using Fastly’s Compute network. In this part I’ll go over DNS, certificate setup, and what I use to build and deploy the blog in more detail.">
+
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "headline": "This Blog is on the Edge Part 2: The Journey Continues",
+    "name": "This Blog is on the Edge Part 2: The Journey Continues",
+    "description": "Part 2: The Journey Continues This is part two of how I got my blog on the edge using Fastly\u0026rsquo;s Compute network. In this part I\u0026rsquo;ll go over DNS, certificate setup, and what I use to build and deploy the blog in more detail.\n",
+    "keywords": ["blog", "Fastly", "setup", "tech", "dns", "http", "wasm", "rust"],
+    "articleBody": "Part 2: The Journey Continues This is part two of how I got my blog on the edge using Fastly’s Compute network. In this part I’ll go over DNS, certificate setup, and what I use to build and deploy the blog in more detail.\nNote This post will be pretty Fastly specific when it comes to DNS and managing the certificates In case you missed it the first part is here.\nIt’s Always DNS I will admit I am not an expert here and what I have works for me and I had to run through a few trail and error runs to get what I wanted working.\nWith that out of the way the first thing to do is take your domain name and in the Fastly Admin Portal on your compute service from part 1 add them to the Domains section (this is the exact URL users will input when they want to visit your site).\nHere I have both (hosfe.lt and www.hosfe.lt). In the Fastly world it is better to have a subdomain (www or the like, I am planning on using ricky in the near future). I’ll explain why later.\nOnce this is done move onto the Hosts, here is the specific host you want to use (this can be just your root level domain e.g. hosfe.lt) as it will be the one the certificate covers. Normally this would be your origin but since this site is completely on the edge we are just using it for certificate security at this point.\nTLS Now to secure the site we need to use the Secure feature of the dashboard. Here we can generate certificates for our host and any subdomains (I used the wildcard domain since I’ll probably be moving from the root to ricky.hosfe.lt in the future and adding more subdomains for experiements). If you can I would recommend doing your root plus whatever subdomains you want (or wildcard).\nThis step will also required you to put in an _acme-challenge to verify you actually own your domain. I use Digital Ocean for my domain networking and throwing that CNAME in along with it’s value was easy. The first certificate took about 10 minutes to verify and propagate after that they have been less than a minute.\nDNS Part 2: There’s Always a Part 2 Once, you have your TLS certificate setup you should be good to go! In order to take full advantage of the edge you need to use a subdomain. This is because root domains are not allows to have a CNAME entry for them and must point to an A or AAAA record. You can use Compute with a root domain and I’ll show you how to find that here.\nFinding Your CNAME Reference for Subdomains After we have created our TLS under the secure tab we need to know which type of certificate we created. Going into the Secure App and TLS Management area we can click to view the certificate to see if we have a t or s type.\nOnce we know that we can give our subdomain a CNAME that Fastly will utilize over the whole edge network. If you need more help there’s a lot more info on the developer docs\nFinding the IP Address for your A Record and Root Domain While we are here we can also give the root domain an IP address to hit if you are keen on using that. This won’t take advantage of the whole edge at first so this is why I mentioned previously that it was better to use a subdomain. There’s a lot more info here.\nThat’s it, you should now have a working secured website that is completely on the Fastly Compute network! Honestly, it’s more work than GeoCities was but given the flexibility I am exited for the internet to get weird again.\nHugo In case you’re wondering the static site generator I am currently using is Hugo. The Theme is hermit-v2. Realistically I wanted a simple yet customizable theme and went with the first I found. I can also change it out pretty easily. Top that with an incredibly simple build system (literally compiling the site by just hugo) and I was sold.\nHow to Deploy and GitHub Actions Lastly, how I currently deploy the blog. You can see my GitHub Actions YAML here. The important part is that I split this in two stages. A test and check on each commit/PR and a deploy only on a tag. This helps me control when I actually push content to the blog.\ndeploy: if: | startsWith(github.ref, 'refs/tags/v') \u0026\u0026 needs.test.result == 'success' I love that little if statement. It will only deploy if the test suite was successful on a tagged run.\nFurther one thing I found confusing at first was I needed to use the Fastly fastly/compute-actions@v5 action not just the deploy action as it still needs to compile and ship the WASM binary. After that it was pretty easy to get working, it will use the fastly.toml at the root of the project and off it goes just like doing it via the CLI (see Part 1 to set that up).\nWARNING Don’t forget to store your Fastly API token in GitHub Secrets so you don’t expose it! env: FASTLY_API_TOKEN: ${{ secrets.FASTLY_API_TOKEN }} What’s next? First, there’s some DNS changes I want to make which won’t be too bad and shouldn’t have an affect on the structure of the site. Moving from the root domain for the blog to ricky.hosfe.lt and making the root a landing page only.\nFor the website I got some great suggestions and probably the first one will be compressing the included HTML text (and incorporated images) and shrinking the size of the WASM binary that gets uploaded (right now sitting at 1.78Mb). Though with the inline image I’m sure a little larger as of today.\nNext, I would like to add much more logging and statistics to understand traffic flow and be able to play with observability and what’s possible with the compute platform (with the added benefit of knowing how little people have read the blog).\nSlowly but surely I’ll get to those but I also want to sprinkle in writing on some topics I want to chat about. So see you soon and I hope this helps, enjoy!\n",
+    "wordCount" : "1060",
+    "inLanguage": "en",
+    "datePublished": "2024-01-22T16:16:18-05:00",
+    "dateModified": "2024-01-22T16:16:18-05:00",
+    "author":{
+        "@type": "Person",
+        "name": "Ricky Hosfelt",
+        "url": "https://hosfe.lt/about/"
+        },
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": "https://hosfe.lt/posts/edge2/"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "Ricky Hosfelt",
+      "description": "My personal website for random technology and fun.",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://hosfe.lt/favicon.ico"
+      }
+    }
+}
+</script><title>This Blog is on the Edge Part 2: The Journey Continues</title>
+<link rel="stylesheet dns-prefetch preconnect preload prefetch" as="style" media="screen" href="https://hosfe.lt/css/style.min.adaa279d6b6bf2a14dfd5446990eddb4b4ce63fd3f8084db63f9616183c6fad0.css" integrity="sha256-raonnWtr8qFN/VRGmQ7dtLTOY/0/gITbY/lhYYPG+tA=" crossorigin="anonymous">
 	</head>
 <body id="page">
-	<header id="site-header" class="animated slideInUp">
+	<header id="site-header">
 		<div class="hdr-wrapper section-inner">
 			<div class="hdr-left">
 				<div class="site-branding">
@@ -54,7 +77,48 @@ Note This post will be pretty Fastly specific when it comes to DNS and managing 
 				<nav class="site-nav hide-in-mobile"><a href="https://hosfe.lt/posts/">Posts</a><a href="https://hosfe.lt/about/">About</a><a href="https://hosfe.lt/resume/">Resume</a></nav>
 			</div>
 			<div class="hdr-right hdr-icons">
-				<button id="toc-btn" class="hdr-btn desktop-only-ib" title="Table of Contents"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-list"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3" y2="6"></line><line x1="3" y1="12" x2="3" y2="12"></line><line x1="3" y1="18" x2="3" y2="18"></line></svg></button><span class="hdr-social hide-in-mobile"><a href="https://fosstodon.org/@degausser" target="_blank" rel="noopener me" title="Mastodon"><svg xmlns="http://www.w3.org/2000/svg" class="feather" width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m 21.474,13.998 c -0.296,1.526 -2.655,3.194 -5.365,3.519 -1.413,0.168 -2.804,0.323 -4.287,0.255 -2.426,-0.111 -4.34,-0.579 -4.34,-0.579 0,0.236 0.015,0.461 0.044,0.672 0.316,2.394 2.373,2.537 4.323,2.604 1.968,0.067 3.721,-0.486 3.721,-0.486 l 0.081,1.779 c 0,0 -1.377,0.739 -3.829,0.875 -1.352,0.075 -3.031,-0.034 -4.987,-0.551 C 2.594,20.963 1.865,16.442 1.752,11.855 1.719,10.493 1.741,9.209 1.741,8.134 1.741,3.443 4.814,2.069 4.814,2.069 6.363,1.356 9.022,1.056 11.787,1.035 h 0.067 c 2.764,0.022 5.426,0.322 6.975,1.033 0,0 3.073,1.375 3.073,6.066 0,0 0.039,3.461 -0.428,5.864"/><path d="M 6.464,13.231 V 7.973 c 0,-1.002 0.549,-2.613 2.613,-2.613 2.064,0 2.741,1.793 2.741,3.484 0,1.692 0,2.23 0,2.23"/><path d="M 17.173,13.231 V 7.973 c 0,-1.002 -0.549,-2.613 -2.613,-2.613 -2.064,0 -2.741,1.793 -2.741,3.484 0,1.692 -0,2.23 -0,2.23"/></svg></a><a href="https://github.com/deg4uss3r" target="_blank" rel="noopener me" title="Github"><svg xmlns="http://www.w3.org/2000/svg" class="feather" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg></a><a href="https://linkedin.com/in/ricky-hosfelt" target="_blank" rel="noopener me" title="Linkedin"><svg xmlns="http://www.w3.org/2000/svg" class="feather" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg></a><a href="https://discord.com/users/560116126592401431" target="_blank" rel="noopener me" title="Discord"><svg xmlns="http://www.w3.org/2000/svg" class="feather" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M8.82889 11.203C7.86239 11.203 7.09937 12.0508 7.09937 13.0852C7.09937 14.1195 7.87935 14.9673 8.82889 14.9673C9.79538 14.9673 10.5584 14.1195 10.5584 13.0852C10.5754 12.0508 9.79538 11.203 8.82889 11.203ZM15.0178 11.203C14.0514 11.203 13.2883 12.0508 13.2883 13.0852C13.2883 14.1195 14.0683 14.9673 15.0178 14.9673C15.9843 14.9673 16.7474 14.1195 16.7474 13.0852C16.7474 12.0508 15.9843 11.203 15.0178 11.203Z" fill="currentColor"/><path d="M14.8477 18.3649C14.8874 18.4483 14.9381 18.5296 15.0005 18.6075C15.3663 19.0644 15.7387 19.5135 15.8832 19.687C16.1242 19.9764 16.4855 20.1329 16.8553 20.117C20.6839 19.9522 22.4053 17.6063 22.7126 17.1342C22.8526 16.919 22.9029 16.6887 22.9023 16.4867C22.8862 11.0873 20.6126 6.69288 20.3618 6.22299C20.2686 6.04849 20.1448 5.9213 20.0223 5.83024C17.6324 4.05442 15.3398 3.89258 14.7987 3.87945C14.4248 3.87037 14.1018 4.039 13.8908 4.28019C13.7833 4.40298 13.7069 4.53817 13.659 4.67843C12.4808 4.5498 11.3488 4.5684 10.3271 4.681C10.2848 4.54257 10.2137 4.40813 10.1111 4.28494C9.90289 4.03513 9.58304 3.87239 9.22517 3.87894C8.72884 3.88801 6.40341 4.02781 3.9777 5.83024C3.85516 5.9213 3.73139 6.04849 3.63825 6.22299C3.38742 6.69289 1.11365 11.0876 1.09774 16.4873C1.09715 16.6871 1.14634 16.9155 1.28416 17.1296C1.58866 17.6027 3.29601 19.9515 7.12649 20.1169C7.50079 20.1331 7.86486 19.9726 8.10512 19.6794C8.2521 19.5 8.63516 19.0311 9.00416 18.5683C9.06865 18.4874 9.12057 18.4028 9.16075 18.316C9.32759 18.3546 9.49869 18.391 9.67405 18.4248L9.67405 18.4248L9.68004 18.426C11.0465 18.681 12.6626 18.7747 14.4312 18.4443C14.5698 18.4206 14.7086 18.3942 14.8477 18.3649Z" stroke="currentColor" stroke-width="2"/></svg></a></span><button id="share-btn" class="hdr-btn" title="Share"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-share-2"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg></button>
+				<button id="toc-btn" class="hdr-btn desktop-only-ib" title=""><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-list">
+      <line x1="8" y1="6" x2="21" y2="6"></line>
+      <line x1="8" y1="12" x2="21" y2="12"></line>
+      <line x1="8" y1="18" x2="21" y2="18"></line>
+      <line x1="3" y1="6" x2="3" y2="6"></line>
+      <line x1="3" y1="12" x2="3" y2="12"></line>
+      <line x1="3" y1="18" x2="3" y2="18"></line>
+   </svg></button><span class="hdr-links hide-in-mobile"><a href="https://fosstodon.org/@degausser" target="_blank" rel="noopener me" title="Mastodon"><svg xmlns="http://www.w3.org/2000/svg" class="feather" width="24" height="24" fill="none" stroke="currentColor"
+   viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+   <path
+      d="m 21.474,13.998 c -0.296,1.526 -2.655,3.194 -5.365,3.519 -1.413,0.168 -2.804,0.323 -4.287,0.255 -2.426,-0.111 -4.34,-0.579 -4.34,-0.579 0,0.236 0.015,0.461 0.044,0.672 0.316,2.394 2.373,2.537 4.323,2.604 1.968,0.067 3.721,-0.486 3.721,-0.486 l 0.081,1.779 c 0,0 -1.377,0.739 -3.829,0.875 -1.352,0.075 -3.031,-0.034 -4.987,-0.551 C 2.594,20.963 1.865,16.442 1.752,11.855 1.719,10.493 1.741,9.209 1.741,8.134 1.741,3.443 4.814,2.069 4.814,2.069 6.363,1.356 9.022,1.056 11.787,1.035 h 0.067 c 2.764,0.022 5.426,0.322 6.975,1.033 0,0 3.073,1.375 3.073,6.066 0,0 0.039,3.461 -0.428,5.864" />
+   <path
+      d="M 6.464,13.231 V 7.973 c 0,-1.002 0.549,-2.613 2.613,-2.613 2.064,0 2.741,1.793 2.741,3.484 0,1.692 0,2.23 0,2.23" />
+   <path
+      d="M 17.173,13.231 V 7.973 c 0,-1.002 -0.549,-2.613 -2.613,-2.613 -2.064,0 -2.741,1.793 -2.741,3.484 0,1.692 -0,2.23 -0,2.23" />
+</svg></a><a href="https://github.com/deg4uss3r" target="_blank" rel="noopener me" title="Github"><svg xmlns="http://www.w3.org/2000/svg" class="feather" width="24" height="24" viewBox="0 0 24 24" fill="none"
+   stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+   <path
+      d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22">
+   </path>
+</svg></a><a href="https://linkedin.com/in/ricky-hosfelt" target="_blank" rel="noopener me" title="Linkedin"><svg xmlns="http://www.w3.org/2000/svg" class="feather" width="24" height="24" viewBox="0 0 24 24" fill="none"
+   stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+   <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path>
+   <rect x="2" y="9" width="4" height="12"></rect>
+   <circle cx="4" cy="4" r="2"></circle>
+</svg></a><a href="https://discord.com/users/560116126592401431" target="_blank" rel="noopener me" title="Discord"><svg xmlns="http://www.w3.org/2000/svg" class="feather" width="24" height="24" viewBox="0 0 24 24" fill="none"
+   stroke-linecap="round" stroke-linejoin="round">
+   <path
+      d="M8.82889 11.203C7.86239 11.203 7.09937 12.0508 7.09937 13.0852C7.09937 14.1195 7.87935 14.9673 8.82889 14.9673C9.79538 14.9673 10.5584 14.1195 10.5584 13.0852C10.5754 12.0508 9.79538 11.203 8.82889 11.203ZM15.0178 11.203C14.0514 11.203 13.2883 12.0508 13.2883 13.0852C13.2883 14.1195 14.0683 14.9673 15.0178 14.9673C15.9843 14.9673 16.7474 14.1195 16.7474 13.0852C16.7474 12.0508 15.9843 11.203 15.0178 11.203Z"
+      fill="currentColor" />
+   <path
+      d="M14.8477 18.3649C14.8874 18.4483 14.9381 18.5296 15.0005 18.6075C15.3663 19.0644 15.7387 19.5135 15.8832 19.687C16.1242 19.9764 16.4855 20.1329 16.8553 20.117C20.6839 19.9522 22.4053 17.6063 22.7126 17.1342C22.8526 16.919 22.9029 16.6887 22.9023 16.4867C22.8862 11.0873 20.6126 6.69288 20.3618 6.22299C20.2686 6.04849 20.1448 5.9213 20.0223 5.83024C17.6324 4.05442 15.3398 3.89258 14.7987 3.87945C14.4248 3.87037 14.1018 4.039 13.8908 4.28019C13.7833 4.40298 13.7069 4.53817 13.659 4.67843C12.4808 4.5498 11.3488 4.5684 10.3271 4.681C10.2848 4.54257 10.2137 4.40813 10.1111 4.28494C9.90289 4.03513 9.58304 3.87239 9.22517 3.87894C8.72884 3.88801 6.40341 4.02781 3.9777 5.83024C3.85516 5.9213 3.73139 6.04849 3.63825 6.22299C3.38742 6.69289 1.11365 11.0876 1.09774 16.4873C1.09715 16.6871 1.14634 16.9155 1.28416 17.1296C1.58866 17.6027 3.29601 19.9515 7.12649 20.1169C7.50079 20.1331 7.86486 19.9726 8.10512 19.6794C8.2521 19.5 8.63516 19.0311 9.00416 18.5683C9.06865 18.4874 9.12057 18.4028 9.16075 18.316C9.32759 18.3546 9.49869 18.391 9.67405 18.4248L9.67405 18.4248L9.68004 18.426C11.0465 18.681 12.6626 18.7747 14.4312 18.4443C14.5698 18.4206 14.7086 18.3942 14.8477 18.3649Z"
+      stroke="currentColor" stroke-width="2" />
+</svg></a></span><button id="share-btn" class="hdr-btn" title=""><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-share-2">
+      <circle cx="18" cy="5" r="3"></circle>
+      <circle cx="6" cy="12" r="3"></circle>
+      <circle cx="18" cy="19" r="3"></circle>
+      <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+      <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+   </svg></button>
  
 <div id="share-links" class="animated fast">
     
@@ -63,22 +127,46 @@ Note This post will be pretty Fastly specific when it comes to DNS and managing 
     
     <ul>
         <li>
-            <a href="https://twitter.com/intent/tweet?hashtags=hermit2&amp;url=https%3a%2f%2fhosfe.lt%2fposts%2fedge2%2f&amp;text=This%20Blog%20is%20on%20the%20Edge%20Part%202%3a%20The%20Journey%20Continues" target="_blank" rel="noopener" aria-label="Share on X"><svg xmlns="http://www.w3.org/2000/svg" class="feather" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path class="st0" d="m21.3 21.1 -11.4 -18.2h-7.2l11.4 18.2zm-18.6 0 7.2 -6.6m4.2 -5 7.2 -6.6"/></svg></a>
+            <a href="https://twitter.com/intent/tweet?hashtags=hermit2&amp;url=https%3a%2f%2fhosfe.lt%2fposts%2fedge2%2f&amp;text=This%20Blog%20is%20on%20the%20Edge%20Part%202%3a%20The%20Journey%20Continues" target="_blank" rel="noopener" aria-label="Share on X"><svg xmlns="http://www.w3.org/2000/svg" class="feather" width="24" height="24" viewBox="0 0 24 24" fill="none"
+   stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+   <path class="st0" d="m21.3 21.1 -11.4 -18.2h-7.2l11.4 18.2zm-18.6 0 7.2 -6.6m4.2 -5 7.2 -6.6" />
+</svg></a>
         </li>
         <li>
-            <a href="https://facebook.com/sharer/sharer.php?u=https%3a%2f%2fhosfe.lt%2fposts%2fedge2%2f" target="_blank" rel="noopener" aria-label="Share on Facebook"><svg xmlns="http://www.w3.org/2000/svg" class="feather" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg></a>
+            <a href="https://facebook.com/sharer/sharer.php?u=https%3a%2f%2fhosfe.lt%2fposts%2fedge2%2f" target="_blank" rel="noopener" aria-label="Share on Facebook"><svg xmlns="http://www.w3.org/2000/svg" class="feather" width="24" height="24" viewBox="0 0 24 24" fill="none"
+   stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+   <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
+</svg></a>
         </li>
         <li>
-            <a href="mailto:?subject=This%20Blog%20is%20on%20the%20Edge%20Part%202%3a%20The%20Journey%20Continues&amp;body=https%3a%2f%2fhosfe.lt%2fposts%2fedge2%2f" target="_self" rel="noopener" aria-label="Share on Email"><svg xmlns="http://www.w3.org/2000/svg" class="feather" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg></a>
+            <a href="mailto:?subject=This%20Blog%20is%20on%20the%20Edge%20Part%202%3a%20The%20Journey%20Continues&amp;body=https%3a%2f%2fhosfe.lt%2fposts%2fedge2%2f" target="_self" rel="noopener" aria-label="Share on Email"><svg xmlns="http://www.w3.org/2000/svg" class="feather" width="24" height="24" viewBox="0 0 24 24" fill="none"
+   stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+   <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+   <polyline points="22,6 12,13 2,6"></polyline>
+</svg></a>
         </li>
         <li>
-            <a href="https://www.linkedin.com/shareArticle?mini=true&amp;url=https%3a%2f%2fhosfe.lt%2fposts%2fedge2%2f&amp;source=https%3a%2f%2fhosfe.lt%2f&amp;title=This%20Blog%20is%20on%20the%20Edge%20Part%202%3a%20The%20Journey%20Continues&amp;summary=This%20Blog%20is%20on%20the%20Edge%20Part%202%3a%20The%20Journey%20Continues%2c%20by%20Ricky%20Hosfelt%0a%0a%3cnil%3e%0a" target="_blank" rel="noopener" aria-label="Share on LinkedIn"><svg xmlns="http://www.w3.org/2000/svg" class="feather" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg></a>
+            <a href="https://www.linkedin.com/shareArticle?mini=true&amp;url=https%3a%2f%2fhosfe.lt%2fposts%2fedge2%2f&amp;source=https%3a%2f%2fhosfe.lt%2f&amp;title=This%20Blog%20is%20on%20the%20Edge%20Part%202%3a%20The%20Journey%20Continues&amp;summary=This%20Blog%20is%20on%20the%20Edge%20Part%202%3a%20The%20Journey%20Continues%2c%20by%20Ricky%20Hosfelt%0a%0a%3cnil%3e%0a" target="_blank" rel="noopener" aria-label="Share on LinkedIn"><svg xmlns="http://www.w3.org/2000/svg" class="feather" width="24" height="24" viewBox="0 0 24 24" fill="none"
+   stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+   <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path>
+   <rect x="2" y="9" width="4" height="12"></rect>
+   <circle cx="4" cy="4" r="2"></circle>
+</svg></a>
         </li>
         <li>
-            <a href="#" onclick="linkShare(&#34;This Blog is on the Edge Part 2: The Journey Continues&#34;,&#34;https://hosfe.lt/posts/edge2/&#34;,&#34;This Blog is on the Edge Part 2: The Journey Continues, by Ricky Hosfelt\n\n\u003cnil\u003e\n&#34;); return false;" target="_self" rel="noopener" aria-label="Copy Link"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-copy"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg></a>
+            <a href="#" onclick="linkShare(&#34;This Blog is on the Edge Part 2: The Journey Continues&#34;,&#34;https://hosfe.lt/posts/edge2/&#34;,&#34;This Blog is on the Edge Part 2: The Journey Continues, by Ricky Hosfelt\n\n\u003cnil\u003e\n&#34;); return false;" target="_self" rel="noopener" aria-label="Copy Link"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-copy">
+      <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+      <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+   </svg></a>
         </li>
     </ul>
-</div><button id="menu-btn" class="hdr-btn" title="Menu"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-menu"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg></button>
+</div><button id="menu-btn" class="hdr-btn" title=""><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+   </svg></button>
 			</div>
 		</div>
 	</header>
@@ -93,75 +181,138 @@ Note This post will be pretty Fastly specific when it comes to DNS and managing 
 
 	<main class="site-main section-inner animated fadeIn faster"><article class="thin">
 			<header class="post-header">
-				<div class="post-meta"><span>Jan 22, 2024</span></div>
+				<div class="post-date"><span>Jan 22, 2024</span></div>
 				<h1>This Blog is on the Edge Part 2: The Journey Continues</h1>
 			</header>
-			<div class="post-info"><p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-feather"><path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z"></path><line x1="16" y1="8" x2="2" y2="22"></line><line x1="17.5" y1="15" x2="9" y2="15"></line></svg><a href="/about/" target="_blank">Ricky Hosfelt</a></p>
-<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-tag meta-icon"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7" y2="7"></line></svg><span class="tag"><a href="https://hosfe.lt/tags/blog">blog</a></span><span class="tag"><a href="https://hosfe.lt/tags/fastly">Fastly</a></span><span class="tag"><a href="https://hosfe.lt/tags/setup">setup</a></span><span class="tag"><a href="https://hosfe.lt/tags/tech">tech</a></span><span class="tag"><a href="https://hosfe.lt/tags/dns">dns</a></span><span class="tag"><a href="https://hosfe.lt/tags/http">http</a></span><span class="tag"><a href="https://hosfe.lt/tags/wasm">wasm</a></span><span class="tag"><a href="https://hosfe.lt/tags/rust">rust</a></span></p>
-<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>1060 Words
-    –
-    
-    
-    
-    4 Minutes, 49 Seconds</p>
-<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-calendar"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>2024-01-22 16:16 -0500</p></div>
+			<div class="post-description"><p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+   stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-feather">
+   <path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z"></path>
+   <line x1="16" y1="8" x2="2" y2="22"></line>
+   <line x1="17.5" y1="15" x2="9" y2="15"></line>
+</svg><a href="https://hosfe.lt/about/" target="_blank">Ricky Hosfelt</a></p>
+<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-tag meta-icon">
+      <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path>
+      <line x1="7" y1="7" x2="7" y2="7"></line>
+   </svg><span class="tag"><a href="https://hosfe.lt/tags/blog">blog</a></span><span class="tag"><a href="https://hosfe.lt/tags/fastly">Fastly</a></span><span class="tag"><a href="https://hosfe.lt/tags/setup">setup</a></span><span class="tag"><a href="https://hosfe.lt/tags/tech">tech</a></span><span class="tag"><a href="https://hosfe.lt/tags/dns">dns</a></span><span class="tag"><a href="https://hosfe.lt/tags/http">http</a></span><span class="tag"><a href="https://hosfe.lt/tags/wasm">wasm</a></span><span class="tag"><a href="https://hosfe.lt/tags/rust">rust</a></span></p>
+<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text">
+      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+      <polyline points="14 2 14 8 20 8"></polyline>
+      <line x1="16" y1="13" x2="8" y2="13"></line>
+      <line x1="16" y1="17" x2="8" y2="17"></line>
+      <polyline points="10 9 9 9 8 9"></polyline>
+   </svg>1060&nbsp  –4 Minutes, 49 Seconds</p>
+<p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-calendar">
+      <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+      <line x1="16" y1="2" x2="16" y2="6"></line>
+      <line x1="8" y1="2" x2="8" y2="6"></line>
+      <line x1="3" y1="10" x2="21" y2="10"></line>
+   </svg>2024-01-22 16:16 -0500
+</p></div>
 			<hr class="post-end">
 			<div class="content">
-				<h1 id="part-2-the-journey-continues">Part 2: The Journey Continues<a href="#part-2-the-journey-continues" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h1>
+				 <h1 id="part-2-the-journey-continues">Part 2: The Journey Continues<a href="#part-2-the-journey-continues" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+      stroke-linecap="round" stroke-linejoin="round">
+      <path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path>
+      <line x1="8" y1="12" x2="16" y2="12"></line>
+   </svg></a></h1>
 <p>This is part two of how I got my blog on the edge using Fastly&rsquo;s Compute network. In this part I&rsquo;ll go over DNS, certificate setup, and what I use to build and deploy the blog in more detail.</p>
 
     <aside class="admonition note">
         <div class="admonition-title">
-            <div class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-edit-2"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg></div><b>Note</b>
+            <div class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-edit-2">
+      <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
+   </svg></div><b>Note</b>
         </div>
         <div class="admonition-content">This post will be pretty Fastly specific when it comes to DNS and managing the certificates</div>
     </aside>
 <p>In case you missed it the <a href="https://hosfe.lt/posts/edge/">first part is here</a>.</p>
-<h2 id="its-always-dns">It&rsquo;s Always DNS<a href="#its-always-dns" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
+<h2 id="its-always-dns">It&rsquo;s Always DNS<a href="#its-always-dns" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+      stroke-linecap="round" stroke-linejoin="round">
+      <path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path>
+      <line x1="8" y1="12" x2="16" y2="12"></line>
+   </svg></a></h2>
 <p>I will admit I am not an expert here and what I have works for me and I had to run through a few trail and error runs to get what I wanted working.</p>
 <p>With that out of the way the first thing to do is take your domain name and in the <a href="https://manage.fastly.com">Fastly Admin Portal</a> on your compute service from part 1 add them to the  <code>Domains</code> section (this is the exact URL users will input when they want to visit your site).</p>
 <p>Here I have both (hosfe.lt and <a href="https://www.hosfe.lt">www.hosfe.lt</a>). In the Fastly world it is better to have a subdomain (<code>www</code> or the like, I am planning on using <code>ricky</code> in the near future). I&rsquo;ll explain why later.</p>
 <p>Once this is done move onto the <code>Hosts</code>, here is the specific host you want to use (this can be just your root level domain e.g. hosfe.lt) as it will be the one the certificate covers. Normally this would be your origin but since this site is completely on the edge we are just using it for certificate security at this point.</p>
-<h2 id="tls">TLS<a href="#tls" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
+<h2 id="tls">TLS<a href="#tls" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+      stroke-linecap="round" stroke-linejoin="round">
+      <path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path>
+      <line x1="8" y1="12" x2="16" y2="12"></line>
+   </svg></a></h2>
 <p>Now to secure the site we need to use the <code>Secure</code> feature of the dashboard. Here we can generate certificates for our host and any subdomains (I used the wildcard domain since I&rsquo;ll probably be moving from the root to <code>ricky.hosfe.lt</code> in the future and adding more subdomains for experiements). If you can I would recommend doing your root plus whatever subdomains you want (or wildcard).</p>
 <p>This step will also required you to put in an <code>_acme-challenge</code> to verify you actually own your domain. I use Digital Ocean for my domain networking and throwing that <code>CNAME</code> in along with it&rsquo;s value was easy. The first certificate took about 10 minutes to verify and propagate after that they have been less than a minute.</p>
-<h2 id="dns-part-2-theres-always-a-part-2">DNS Part 2: There&rsquo;s Always a Part 2<a href="#dns-part-2-theres-always-a-part-2" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
+<h2 id="dns-part-2-theres-always-a-part-2">DNS Part 2: There&rsquo;s Always a Part 2<a href="#dns-part-2-theres-always-a-part-2" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+      stroke-linecap="round" stroke-linejoin="round">
+      <path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path>
+      <line x1="8" y1="12" x2="16" y2="12"></line>
+   </svg></a></h2>
 <p>Once, you have your TLS certificate setup you should be good to go! In order to take full advantage of the edge you need to use a subdomain. This is because root domains are not allows to have a <code>CNAME</code> entry for them and must point to an <code>A</code> or <code>AAAA</code> record. You <em>can</em> use Compute with a root domain and I&rsquo;ll show you how to find that here.</p>
-<h3 id="finding-your-cname-reference-for-subdomains">Finding Your CNAME Reference for Subdomains<a href="#finding-your-cname-reference-for-subdomains" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h3>
+<h3 id="finding-your-cname-reference-for-subdomains">Finding Your CNAME Reference for Subdomains<a href="#finding-your-cname-reference-for-subdomains" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+      stroke-linecap="round" stroke-linejoin="round">
+      <path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path>
+      <line x1="8" y1="12" x2="16" y2="12"></line>
+   </svg></a></h3>
 <p>After we have created our TLS under the secure tab we need to know <em>which</em> type of certificate we created. Going into the <code>Secure</code> App and <code>TLS Management</code> area we can click to view the certificate to see if we have a <code>t</code> or <code>s</code> type.</p>
 <p><img src="/images/edge-post-2_certificate.png" alt="Which certificate type is active"></p>
 <p>Once we know that we can give our subdomain a <code>CNAME</code> that Fastly will utilize over the whole edge network. If you need more help there&rsquo;s a lot more info on the <a href="https://docs.fastly.com/en/guides/working-with-cname-records-and-your-dns-provider#tls-enabled-hostnames">developer docs</a></p>
-<h3 id="finding-the-ip-address-for-your-a-record-and-root-domain">Finding the IP Address for your A Record and Root Domain<a href="#finding-the-ip-address-for-your-a-record-and-root-domain" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h3>
+<h3 id="finding-the-ip-address-for-your-a-record-and-root-domain">Finding the IP Address for your A Record and Root Domain<a href="#finding-the-ip-address-for-your-a-record-and-root-domain" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+      stroke-linecap="round" stroke-linejoin="round">
+      <path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path>
+      <line x1="8" y1="12" x2="16" y2="12"></line>
+   </svg></a></h3>
 <p>While we are here we can also give the root domain an IP address to hit if you are keen on using that. This won&rsquo;t take advantage of the whole edge at first so this is why I mentioned previously that it was better to use a subdomain. There&rsquo;s a lot more info <a href="https://docs.fastly.com/en/guides/using-fastly-with-apex-domains#when-you-have-tls-configured">here</a>.</p>
 <p>That&rsquo;s it, you should now have a working secured website that is completely on the Fastly Compute network! Honestly, it&rsquo;s more work than GeoCities was but given the flexibility I am exited for the <a href="https://www.rollingstone.com/culture/culture-commentary/internet-future-about-to-get-weird-1234938403/">internet to get weird again</a>.</p>
-<h2 id="hugo">Hugo<a href="#hugo" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
+<h2 id="hugo">Hugo<a href="#hugo" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+      stroke-linecap="round" stroke-linejoin="round">
+      <path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path>
+      <line x1="8" y1="12" x2="16" y2="12"></line>
+   </svg></a></h2>
 <p>In case you&rsquo;re wondering the static site generator I am currently using is <a href="https://gohugo.io">Hugo</a>. The Theme is <a href="https://themes.gohugo.io/themes/hermit-v2/">hermit-v2</a>. Realistically I wanted a simple yet customizable theme and went with the first I found. I can also change it out pretty easily. Top that with an incredibly simple build system (literally compiling the site by just <code>hugo</code>) and I was sold.</p>
-<h2 id="how-to-deploy-and-github-actions">How to Deploy and GitHub Actions<a href="#how-to-deploy-and-github-actions" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
+<h2 id="how-to-deploy-and-github-actions">How to Deploy and GitHub Actions<a href="#how-to-deploy-and-github-actions" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+      stroke-linecap="round" stroke-linejoin="round">
+      <path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path>
+      <line x1="8" y1="12" x2="16" y2="12"></line>
+   </svg></a></h2>
 <p>Lastly, how I currently deploy the blog. You can see my <a href="https://github.com/deg4uss3r/hosfe.lt/blob/main/.github/workflows/test.yml">GitHub Actions YAML here</a>. The important part is that I split this in two stages. A test and check on each commit/PR and a deploy only on a tag. This helps me control when I actually push content to the blog.</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#ff79c6">deploy</span>:
 </span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">if</span>: |<span style="color:#f1fa8c">
-</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c">      startsWith(github.ref, &#39;refs/tags/v&#39;) &amp;&amp; needs.test.result == &#39;success&#39;</span>      
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c">      startsWith(github.ref, &#39;refs/tags/v&#39;) &amp;&amp; needs.test.result == &#39;success&#39;</span>
 </span></span></code></pre></div><p>I love that little <code>if</code> statement. It will only deploy if the test suite was successful on a tagged run.</p>
 <p>Further one thing I found confusing at first was I needed to use the Fastly <code>fastly/compute-actions@v5</code> action not just the <code>deploy</code> action as it still needs to compile and ship the WASM binary. After that it was pretty easy to get working, it will use the <code>fastly.toml</code> at the root of the project and off it goes just like doing it via the CLI (see <a href="https://hosfe.lt/posts/edge/">Part 1</a> to set that up).</p>
 
     <aside class="admonition danger">
         <div class="admonition-title">
-            <div class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-alert-triangle"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg></div><b>WARNING</b>
+            <div class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-alert-triangle">
+      <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+      <line x1="12" y1="9" x2="12" y2="13"></line>
+      <line x1="12" y1="17" x2="12.01" y2="17"></line>
+   </svg></div><b>WARNING</b>
         </div>
         <div class="admonition-content">Don&rsquo;t forget to store your Fastly API token in GitHub Secrets so you don&rsquo;t expose it!</div>
     </aside>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span>      <span style="color:#ff79c6">env</span>:
 </span></span><span style="display:flex;"><span>        <span style="color:#ff79c6">FASTLY_API_TOKEN</span>: ${{ secrets.FASTLY_API_TOKEN }}
-</span></span></code></pre></div><h2 id="whats-next">What&rsquo;s next?<a href="#whats-next" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></a></h2>
+</span></span></code></pre></div><h2 id="whats-next">What&rsquo;s next?<a href="#whats-next" class="anchor" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+      stroke-linecap="round" stroke-linejoin="round">
+      <path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path>
+      <line x1="8" y1="12" x2="16" y2="12"></line>
+   </svg></a></h2>
 <p>First, there&rsquo;s some DNS changes I want to make which won&rsquo;t be too bad and shouldn&rsquo;t have an affect on the structure of the site. Moving from the root domain for the blog to <code>ricky.hosfe.lt</code> and making the root a landing page only.</p>
 <p>For the website I got some great suggestions and probably the first one will be compressing the included HTML text (and incorporated images) and shrinking the size of the WASM binary that gets uploaded (right now sitting at 1.78Mb). Though with the inline image I&rsquo;m sure a little larger as of today.</p>
 <p>Next, I would like to add much more logging and statistics to understand traffic flow and be able to play with observability and what&rsquo;s possible with the compute platform (with the added benefit of knowing how little people have read the blog).</p>
 <p>Slowly but surely I&rsquo;ll get to those but I also want to sprinkle in writing on some topics I want to chat about. So see you soon and I hope this helps, enjoy!</p>
 
 			</div>
+			
 
 <div class="related-posts thin">
-	<h2>See Also</h2>
+	<h2></h2>
 	<ul>
 	
 	<li><a href="/posts/edge/">It&#39;s 2024 and This Blog is Now On The Edge</a></li>
@@ -171,7 +322,7 @@ Note This post will be pretty Fastly specific when it comes to DNS and managing 
 
 		</article>
 		<aside id="toc">
-			<div class="toc-title">Table of Contents</div>
+			<div class="toc-title"></div>
 			<nav id="TableOfContents">
   <ul>
     <li><a href="#its-always-dns">It&rsquo;s Always DNS</a></li>
@@ -190,29 +341,27 @@ Note This post will be pretty Fastly specific when it comes to DNS and managing 
 		</aside>
 		<div class="post-nav thin">
 			<a class="next-post" href="https://hosfe.lt/posts/adblocker/">
-				<span class="post-nav-label"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-left"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>&nbsp;Newer</span><br><span>Adblocker on an Edge Network</span>
+				<span class="post-nav-label"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-left">
+      <line x1="19" y1="12" x2="5" y2="12"></line>
+      <polyline points="12 19 5 12 12 5"></polyline>
+   </svg>&nbsp;</span><br><span>Adblocker on an Edge Network</span>
 			</a>
 			<a class="prev-post" href="https://hosfe.lt/posts/edge/">
-				<span class="post-nav-label">Older&nbsp;<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-right"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></span><br><span>It&#39;s 2024 and This Blog is Now On The Edge</span>
+				<span class="post-nav-label">&nbsp;<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-right">
+      <line x1="5" y1="12" x2="19" y2="12"></line>
+      <polyline points="12 5 19 12 12 19"></polyline>
+   </svg></span><br><span>It&#39;s 2024 and This Blog is Now On The Edge</span>
 			</a>
 		</div>
-		<div id="comments" class="thin">
-</div>
+		<div id="comments" class="thin"></div>
 	</main>
-
 <footer id="site-footer" class="section-inner thin animated fadeIn faster">
-	<p>
-		&copy; 2024 <a href="https://hosfe.lt/">Ricky Hosfelt</a>
-		&#183; MIT – All Rights Reserved
-		&#183; Made with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a>
-		&#183; Theme <a href="https://github.com/1bl4z3r/hermit-V2" target="_blank" rel="noopener">Hermit-V2</a>
-		
-		&#183; <a href="https://hosfe.lt/posts/index.xml" target="_blank" title="rss"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-rss"><path d="M4 11a9 9 0 0 1 9 9"></path><path d="M4 4a16 16 0 0 1 16 16"></path><circle cx="5" cy="19" r="1"></circle></svg></a>
-		
-	</p>
-
-</footer>
-<script async src="https://hosfe.lt/js/bundle.min.038214de9d568246fadcfeb06c69349925de3209f332ec123861b6aa031d63c6.js" integrity="sha256-A4IU3p1Wgkb63P6wbGk0mSXeMgnzMuwSOGG2qgMdY8Y=" crossorigin="anonymous"></script><script async src="https://hosfe.lt/js/link-share.min.24409a4f6e5537d70ffc55ec8f9192208d718678cb8638585342423020b37f39.js" integrity="sha256-JECaT25VN9cP/FXsj5GSII1xhnjLhjhYU0JCMCCzfzk=" crossorigin="anonymous"></script>
+<p>
+	&copy; 2025 <a href="https://hosfe.lt/">Ricky Hosfelt</a>
+	&#183; MIT – All Rights Reserved&#183; Made with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a>
+	&#183; Theme <a href="https://github.com/1bl4z3r/hermit-V2" target="_blank" rel="noopener">Hermit-V2</a></p></footer>
+<script async src="https://hosfe.lt/js/bundle.min.c7c384e4d29d192bbac6811ae4660bb01767194a5bea56baca77e8260f93ea16.js" integrity="sha256-x8OE5NKdGSu6xoEa5GYLsBdnGUpb6la6ynfoJg+T6hY=" crossorigin="anonymous"></script><script async src="https://hosfe.lt/js/link-share.min.24409a4f6e5537d70ffc55ec8f9192208d718678cb8638585342423020b37f39.js" integrity="sha256-JECaT25VN9cP/FXsj5GSII1xhnjLhjhYU0JCMCCzfzk=" crossorigin="anonymous"></script>
 </body>
-
 </html>
