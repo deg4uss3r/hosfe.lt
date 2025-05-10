@@ -95,6 +95,42 @@ fn main(req: Request) -> Result<Response, Error> {
                 .with_content_type(mime::APPLICATION_JAVASCRIPT_UTF_8)
                 .with_body(fetch_resource_from_kv("link-share.min.24409a4f6e5537d70ffc55ec8f9192208d718678cb8638585342423020b37f39.js")))
         },
+        // favicon things 
+        "/site.webmanifest" => {
+            Ok(Response::from_status(StatusCode::OK)
+                .with_content_type(mime::APPLICATION_JSON)
+                .with_body(fetch_resource_from_kv("site.webmanifest")))
+        },
+        "/web-app-manifest-512x512.png" => {
+            Ok(Response::from_status(StatusCode::OK)
+                .with_content_type(mime::IMAGE_PNG)
+                .with_body(fetch_image_resource_from_kv("web-app-manifest-512x512.png")))
+        },
+        "/web-app-manifest-192x192.png" => {
+            Ok(Response::from_status(StatusCode::OK)
+                .with_content_type(mime::IMAGE_PNG)
+                .with_body(fetch_image_resource_from_kv("web-app-manifest-192x192.png")))
+        },
+        "/favicon-96x96.png" => {
+            Ok(Response::from_status(StatusCode::OK)
+                .with_content_type(mime::IMAGE_PNG)
+                .with_body(fetch_image_resource_from_kv("favicon-96x96.png")))
+        },
+        "/apple-touch-icon.png" => {
+            Ok(Response::from_status(StatusCode::OK)
+                .with_content_type(mime::IMAGE_PNG)
+                .with_body(fetch_image_resource_from_kv("apple-touch-icon.png")))
+        },
+        "/favicon.svg" => {
+            Ok(Response::from_status(StatusCode::OK)
+                .with_content_type(mime::IMAGE_SVG)
+                .with_body(fetch_image_resource_from_kv("favicon.svg")))
+        },
+        "/favicon.ico" => {
+            Ok(Response::from_status(StatusCode::OK)
+                .with_content_type(mime::IMAGE_STAR)
+                .with_body(fetch_image_resource_from_kv("favicon.ico")))
+        },
         // blog posts go after here
         "/posts/story/" => {
             Ok(Response::from_status(StatusCode::OK)
@@ -124,7 +160,7 @@ fn main(req: Request) -> Result<Response, Error> {
         "/images/honeycomb.png" => {
             Ok(Response::from_status(StatusCode::OK)
                 .with_content_type(mime::IMAGE_PNG)
-                .with_body(fetch_image_resource_from_kv("public/images/honeycomb.png")))
+                .with_body(fetch_image_resource_from_kv("images/honeycomb.png")))
         },
         // Catch all other requests and return a 404.
         _ =>  {
