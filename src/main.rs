@@ -1,7 +1,9 @@
 use fastly::http::{header, Method, StatusCode};
+use fastly::image_optimizer::ImageOptimizerOptions;
 use fastly::{kv_store::KVStore, mime, Error, Request, Response};
 
 const RESOURCE_KV_STORE_NAME: &str = "hosfelt-resources";
+const IMAGE_ORIGIN_BACKEND: &str = "hosfelt-image-origin";
 
 fn fetch_resource_from_kv(key: &str) -> String {
     let store = KVStore::open(RESOURCE_KV_STORE_NAME).unwrap();
@@ -34,6 +36,11 @@ fn main(req: Request) -> Result<Response, Error> {
         // Let any other requests through
         _ => (),
     };
+
+    // default Image Optimization options
+    let mut io_options =
+        ImageOptimizerOptions::from_region(fastly::image_optimizer::ImageOptimizerRegion::UsEast);
+    io_options.format = Some(fastly::image_optimizer::Format::Auto);
 
     match req.get_path() {
         "/" => {
@@ -114,24 +121,16 @@ fn main(req: Request) -> Result<Response, Error> {
                 .with_body(fetch_resource_from_kv("site.webmanifest")))
         },
         "/web-app-manifest-512x512.png" => {
-            Ok(Response::from_status(StatusCode::OK)
-                .with_content_type(mime::IMAGE_PNG)
-                .with_body(fetch_image_resource_from_kv("web-app-manifest-512x512.png")))
+            Ok(req.with_image_optimizer(io_options).send(IMAGE_ORIGIN_BACKEND)?)
         },
         "/web-app-manifest-192x192.png" => {
-            Ok(Response::from_status(StatusCode::OK)
-                .with_content_type(mime::IMAGE_PNG)
-                .with_body(fetch_image_resource_from_kv("web-app-manifest-192x192.png")))
+            Ok(req.with_image_optimizer(io_options).send(IMAGE_ORIGIN_BACKEND)?)
         },
         "/favicon-96x96.png" => {
-            Ok(Response::from_status(StatusCode::OK)
-                .with_content_type(mime::IMAGE_PNG)
-                .with_body(fetch_image_resource_from_kv("favicon-96x96.png")))
+            Ok(req.with_image_optimizer(io_options).send(IMAGE_ORIGIN_BACKEND)?)
         },
         "/apple-touch-icon.png" => {
-            Ok(Response::from_status(StatusCode::OK)
-                .with_content_type(mime::IMAGE_PNG)
-                .with_body(fetch_image_resource_from_kv("apple-touch-icon.png")))
+            Ok(req.with_image_optimizer(io_options).send(IMAGE_ORIGIN_BACKEND)?)
         },
         "/favicon.svg" => {
             Ok(Response::from_status(StatusCode::OK)
@@ -160,9 +159,7 @@ fn main(req: Request) -> Result<Response, Error> {
                 .with_body(fetch_resource_from_kv("posts/edge2/index.html")))
         },
         "/images/edge-post-2_certificate.png" => {
-            Ok(Response::from_status(StatusCode::OK)
-                .with_content_type(mime::IMAGE_PNG)
-                .with_body(fetch_image_resource_from_kv("images/edge-post-2_certificate.png")))
+            Ok(req.with_image_optimizer(io_options).send(IMAGE_ORIGIN_BACKEND)?)
         },
         "/posts/adblocker/" => {
             Ok(Response::from_status(StatusCode::OK)
@@ -170,9 +167,7 @@ fn main(req: Request) -> Result<Response, Error> {
                 .with_body(fetch_resource_from_kv("posts/adblocker/index.html")))
         },
         "/images/honeycomb.png" => {
-            Ok(Response::from_status(StatusCode::OK)
-                .with_content_type(mime::IMAGE_PNG)
-                .with_body(fetch_image_resource_from_kv("images/honeycomb.png")))
+            Ok(req.with_image_optimizer(io_options).send(IMAGE_ORIGIN_BACKEND)?)
         },
         // Catch all other requests and return a 404.
         _ =>  {
