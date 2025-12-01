@@ -161,6 +161,14 @@ fn main(req: Request) -> Result<Response, Error> {
         "/images/edge-post-2_certificate.png" => {
             Ok(req.with_image_optimizer(io_options).send(IMAGE_ORIGIN_BACKEND)?)
         },
+        "/posts/edge3/" => {
+            Ok(Response::from_status(StatusCode::OK)
+                .with_content_type(mime::TEXT_HTML_UTF_8)
+                .with_body(fetch_resource_from_kv("posts/edge3/index.html")))
+        },
+        "/images/edge-post-3_road.jpeg" => {
+            Ok(req.with_image_optimizer(io_options).send(IMAGE_ORIGIN_BACKEND)?)
+        }, 
         "/posts/adblocker/" => {
             Ok(Response::from_status(StatusCode::OK)
                 .with_content_type(mime::TEXT_HTML_UTF_8)

@@ -7,8 +7,15 @@
     <generator>Hugo</generator>
     <language>en-us</language>
     <copyright>2025</copyright>
-    <lastBuildDate>Wed, 15 May 2024 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Tue, 25 Nov 2025 13:51:15 -0500</lastBuildDate>
     <atom:link href="https://hosfe.lt/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>This Blog is on the Edge Part 3: Optimizing</title>
+      <link>https://hosfe.lt/posts/edge3/</link>
+      <pubDate>Tue, 25 Nov 2025 13:51:15 -0500</pubDate>
+      <guid>https://hosfe.lt/posts/edge3/</guid>
+      <description>&lt;h1 id=&#34;part-3-optimizations&#34;&gt;Part 3: Optimizations&lt;a href=&#34;#part-3-optimizations&#34; class=&#34;anchor&#34; aria-hidden=&#34;true&#34;&gt;&lt;svg xmlns=&#34;http://www.w3.org/2000/svg&#34; viewBox=&#34;0 0 24 24&#34; fill=&#34;none&#34; stroke=&#34;currentColor&#34; stroke-width=&#34;2&#34;&#xA;      stroke-linecap=&#34;round&#34; stroke-linejoin=&#34;round&#34;&gt;&#xA;      &lt;path d=&#34;M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3&#34;&gt;&lt;/path&gt;&#xA;      &lt;line x1=&#34;8&#34; y1=&#34;12&#34; x2=&#34;16&#34; y2=&#34;12&#34;&gt;&lt;/line&gt;&#xA;   &lt;/svg&gt;&lt;/a&gt;&lt;/h1&gt;&#xA;&lt;p&gt;This is part three of how I got my blog on the edge using Fastly&amp;rsquo;s Compute network. In this part I&amp;rsquo;ll go over some small optimizations I have made.&lt;/p&gt;&#xA;&#xA;    &lt;aside class=&#34;admonition note&#34;&gt;&#xA;        &lt;div class=&#34;admonition-title&#34;&gt;&#xA;            &lt;div class=&#34;icon&#34;&gt;&lt;svg xmlns=&#34;http://www.w3.org/2000/svg&#34; width=&#34;24&#34; height=&#34;24&#34; viewBox=&#34;0 0 24 24&#34; fill=&#34;none&#34; stroke=&#34;currentColor&#34;&#xA;      stroke-width=&#34;2&#34; stroke-linecap=&#34;round&#34; stroke-linejoin=&#34;round&#34; class=&#34;feather feather-edit-2&#34;&gt;&#xA;      &lt;path d=&#34;M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z&#34;&gt;&lt;/path&gt;&#xA;   &lt;/svg&gt;&lt;/div&gt;&lt;b&gt;Note&lt;/b&gt;&#xA;        &lt;/div&gt;&#xA;        &lt;div class=&#34;admonition-content&#34;&gt;This post will be pretty Fastly specific when it comes to DNS and managing the certificates&lt;/div&gt;&#xA;    &lt;/aside&gt;&#xA;&lt;p&gt;In case you missed it the &lt;a href=&#34;https://hosfe.lt/posts/edge/&#34;&gt;first part is here&lt;/a&gt; and the &lt;a href=&#34;https://hosfe.lt/posts/edge2/&#34;&gt;second part is here&lt;/a&gt;.&lt;/p&gt;</description>
+    </item>
     <item>
       <title>Adblocker on an Edge Network</title>
       <link>https://hosfe.lt/posts/adblocker/</link>
